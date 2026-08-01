@@ -166,8 +166,8 @@ const PROJECTS = [
     org: "UKRAINIAN INSTITUTE OF MODERN ART", location: "CHICAGO, IL US",
     title: "AFTER LINE, BEFORE FORM",
     images: [
-      { image: null, caption: "Installation view, Ukrainian Institute of Modern Art." },
-      { image: null, caption: "Detail, opening reception." },
+      { image: "https://picsum.photos/seed/uima1/700/500", caption: "Installation view, Ukrainian Institute of Modern Art." },
+      { image: "https://picsum.photos/seed/uima2/700/500", caption: "Detail, opening reception." },
     ],
     purpose: "To learn about the perspectives of foreigners and scholars on the history and the ongoing interaction between South and North Korea.",
     role: ["Simultaneous Interpretor", "Group Assistant"],
@@ -249,7 +249,11 @@ const STUDIES = [
   },
   {
     id: ++studyAutoId,
-    academic: ["East Asian Art History & Culture"], area: "20th Century Korean Art", images: [],
+    academic: ["East Asian Art History & Culture"], area: "20th Century Korean Art",
+    images: [
+      { image: "https://picsum.photos/seed/study1/700/500", caption: "Field research, Seoul, 2024." },
+      { image: "https://picsum.photos/seed/study2/700/500", caption: "Archive materials reviewed for this study." },
+    ],
     researchQuestion: "", terminology: "", scopeOfArea: "", methodology: "",
     researchSignificance: "", keyWords: "", references: "",
   },
@@ -385,6 +389,8 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1 }) 
         display: "flex",
         flexDirection: "column",
         cursor: "pointer",
+        paddingBottom: 28,
+        boxSizing: "border-box",
       }}
     >
       <div
@@ -523,6 +529,7 @@ function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
 }
 
 function WorkDetail({ artwork, lang, firstImageRef }) {
+  const [imageSide, setImageSide] = useState("left"); // toggle to preview images on the right instead
   const images = artwork.detailImages && artwork.detailImages.length ? artwork.detailImages : [{ image: artwork.image, caption: "" }];
   const fields = [
     { label: lang === "ko" ? "제목" : "Title", value: artwork.title },
@@ -532,60 +539,95 @@ function WorkDetail({ artwork, lang, firstImageRef }) {
   ].filter((f) => f.value);
 
   return (
-    <div style={{ display: "flex", gap: 64, alignItems: "flex-start", flexWrap: "wrap" }}>
-      <div style={{ flex: "1 1 520px", display: "flex", flexDirection: "column", gap: 44 }}>
-        {images.map((img, i) => (
-          <div key={i}>
-            <ImageFrame src={img.image} alt={artwork.title} containerRef={i === 0 ? firstImageRef : undefined} />
-            {img.caption && (
-              <div
-                style={{
-                  marginTop: 10,
-                  fontSize: 12,
-                  fontStyle: "italic",
-                  color: "#9A9A94",
-                  fontFamily: "'Work Sans', sans-serif",
-                }}
-              >
-                {img.caption}
-              </div>
-            )}
-          </div>
+    <div>
+      {/* Example toggle — lets you compare images-left vs images-right live.
+          Remove this button once you've decided which layout to keep. */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
+        {["left", "right"].map((side) => (
+          <button
+            key={side}
+            onClick={() => setImageSide(side)}
+            style={{
+              fontFamily: "'Jost', sans-serif",
+              fontSize: 10,
+              letterSpacing: "0.1em",
+              padding: "5px 12px",
+              borderRadius: 999,
+              background: imageSide === side ? "#EDEDEA" : "transparent",
+              color: "#1A1B4B",
+              border: "1px solid #E2E2ED",
+              cursor: "pointer",
+              transition: "background 0.25s ease",
+            }}
+          >
+            {lang === "ko" ? (side === "left" ? "이미지: 왼쪽" : "이미지: 오른쪽") : `IMAGES: ${side.toUpperCase()}`}
+          </button>
         ))}
       </div>
 
-      <div style={{ flex: "1 1 280px", position: "sticky", top: 0 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 30 }}>
-          {fields.map((f) => (
-            <div key={f.label}>
-              <div
-                style={{
-                  fontSize: 10,
-                  color: "#9A9A94",
-                  letterSpacing: "0.12em",
-                  fontFamily: "'Jost', sans-serif",
-                  marginBottom: 2,
-                }}
-              >
-                {f.label}
-              </div>
-              <div style={{ fontSize: 14, color: "#1A1B4B", fontFamily: "'Work Sans', sans-serif" }}>{f.value}</div>
+      <div style={{ display: "flex", gap: 64, alignItems: "flex-start", flexWrap: "wrap" }}>
+        <div
+          style={{
+            flex: "1 1 520px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 44,
+            order: imageSide === "right" ? 2 : 1,
+          }}
+        >
+          {images.map((img, i) => (
+            <div key={i}>
+              <ImageFrame src={img.image} alt={artwork.title} containerRef={i === 0 ? firstImageRef : undefined} />
+              {img.caption && (
+                <div
+                  style={{
+                    marginTop: 10,
+                    fontSize: 12,
+                    fontStyle: "italic",
+                    color: "#9A9A94",
+                    fontFamily: "'Work Sans', sans-serif",
+                  }}
+                >
+                  {img.caption}
+                </div>
+              )}
             </div>
           ))}
         </div>
-        {artwork.description && (
-          <div
-            style={{
-              fontSize: 13,
-              lineHeight: 1.75,
-              color: "#333333",
-              whiteSpace: "pre-line",
-              fontFamily: "'Work Sans', sans-serif",
-            }}
-          >
-            {artwork.description}
+
+        <div style={{ flex: "1 1 280px", position: "sticky", top: 0, order: imageSide === "right" ? 1 : 2 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 30 }}>
+            {fields.map((f) => (
+              <div key={f.label}>
+                <div
+                  style={{
+                    fontSize: 10,
+                    color: "#9A9A94",
+                    letterSpacing: "0.12em",
+                    fontFamily: "'Jost', sans-serif",
+                    marginBottom: 2,
+                  }}
+                >
+                  {f.label}
+                </div>
+                <div style={{ fontSize: 14, color: "#1A1B4B", fontFamily: "'Work Sans', sans-serif" }}>{f.value}</div>
+              </div>
+            ))}
           </div>
-        )}
+          {artwork.description && (
+            <div
+              style={{
+                fontSize: 13,
+                lineHeight: 1.75,
+                color: "#333333",
+                whiteSpace: "pre-line",
+                fontFamily: "'Work Sans', sans-serif",
+              }}
+            >
+              {artwork.description}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1104,43 +1146,46 @@ function StudiesBody({ lang, t }) {
   );
 }
 
-function FilterGroup({ label, options, selected, onSelect, multi }) {
+function FilterLabel({ label }) {
+  return (
+    <span
+      style={{
+        fontSize: 10,
+        color: "#9A9A94",
+        letterSpacing: "0.12em",
+        fontFamily: "'Jost', sans-serif",
+        textAlign: "center",
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+function FilterPills({ options, selected, onSelect, multi }) {
   const isActive = (i) => (multi ? selected.includes(i) : selected === i);
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
-      <span
-        style={{
-          fontSize: 10,
-          color: "#9A9A94",
-          letterSpacing: "0.12em",
-          fontFamily: "'Jost', sans-serif",
-          textAlign: "center",
-        }}
-      >
-        {label}
-      </span>
-      <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 4 }}>
-        {options.map((opt, i) => (
-          <button
-            key={opt}
-            onClick={() => onSelect(i)}
-            style={{
-              fontFamily: "'Jost', sans-serif",
-              fontSize: 11,
-              letterSpacing: "0.08em",
-              padding: "5px 12px",
-              borderRadius: 999,
-              background: isActive(i) ? "#EDEDEA" : "transparent",
-              color: "#1A1B4B",
-              border: "none",
-              cursor: "pointer",
-              transition: "background 0.25s ease",
-            }}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
+    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 4 }}>
+      {options.map((opt, i) => (
+        <button
+          key={opt}
+          onClick={() => onSelect(i)}
+          style={{
+            fontFamily: "'Jost', sans-serif",
+            fontSize: 11,
+            letterSpacing: "0.08em",
+            padding: "5px 12px",
+            borderRadius: 999,
+            background: isActive(i) ? "#EDEDEA" : "transparent",
+            color: "#1A1B4B",
+            border: "none",
+            cursor: "pointer",
+            transition: "background 0.25s ease",
+          }}
+        >
+          {opt}
+        </button>
+      ))}
     </div>
   );
 }
@@ -1284,6 +1329,7 @@ export default function PortfolioSite() {
         overflow: "hidden",
         fontFamily: "'Work Sans', sans-serif",
         color: "#1A1B4B",
+        position: "relative",
       }}
     >
       <style>{`
@@ -1297,6 +1343,22 @@ export default function PortfolioSite() {
         }
       `}</style>
 
+      {/* Single continuous horizontal divider — drawn once, spanning full width, so it's
+          guaranteed pixel-straight where it crosses the sidebar's vertical line, instead of
+          relying on two separate borders lining up exactly. */}
+      <div
+        style={{
+          position: "absolute",
+          top: HEADER_H,
+          left: 0,
+          right: 0,
+          height: 1,
+          background: "#E2E2ED",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
+
       <div style={{ display: "flex", height: "100%" }}>
         {/* Sidebar — fixed, always visible, never scrolls */}
         <div
@@ -1307,6 +1369,7 @@ export default function PortfolioSite() {
             height: "100%",
             display: "flex",
             flexDirection: "column",
+            boxSizing: "border-box",
           }}
         >
           {/* Corner box — text sits near the bottom-right, where the sidebar's vertical line
@@ -1315,12 +1378,12 @@ export default function PortfolioSite() {
             style={{
               height: HEADER_H,
               flexShrink: 0,
-              borderBottom: "1px solid #E2E2ED",
               display: "flex",
               alignItems: "flex-end",
               justifyContent: "flex-end",
               paddingRight: 24,
               paddingBottom: 14,
+              boxSizing: "border-box",
             }}
           >
             {selectedWork ? (
@@ -1332,7 +1395,7 @@ export default function PortfolioSite() {
                   display: "inline-block",
                   fontFamily: "'Jost', sans-serif",
                   fontSize: 14,
-                  fontWeight: 600,
+                  fontWeight: 400,
                   letterSpacing: "0.34em",
                   color: "#1A1B4B",
                 }}
@@ -1449,10 +1512,10 @@ export default function PortfolioSite() {
             style={{
               height: HEADER_H,
               flexShrink: 0,
-              borderBottom: "1px solid #E2E2ED",
               padding: "0 44px",
               display: "flex",
               alignItems: "center",
+              boxSizing: "border-box",
             }}
           >
             {currentSection === "works" && (
@@ -1461,7 +1524,7 @@ export default function PortfolioSite() {
                   display: "grid",
                   gridTemplateColumns: "repeat(4, auto)",
                   columnGap: 40,
-                  rowGap: 6,
+                  rowGap: 4,
                   overflowX: "auto",
                 }}
               >
@@ -1492,10 +1555,17 @@ export default function PortfolioSite() {
                   {t.context}
                 </div>
 
-                <FilterGroup label={t.medium} options={t.mediumOpts} selected={selectedMediums} onSelect={toggleMedium} multi />
-                <FilterGroup label={t.media} options={t.mediaOpts} selected={filters.media} onSelect={(i) => toggleFilter("media", i)} />
-                <FilterGroup label={t.layout} options={t.layoutOpts} selected={filters.layout} onSelect={(i) => toggleFilter("layout", i)} />
-                <FilterGroup label={t.order} options={t.orderOpts} selected={filters.order} onSelect={(i) => toggleFilter("order", i)} />
+                <FilterLabel label={t.medium} />
+                <FilterLabel label={t.media} />
+                <FilterLabel label={t.layout} />
+                <FilterLabel label={t.order} />
+
+                <div style={{ gridColumn: "1 / -1", borderTop: "1px solid #E2E2ED", margin: 0 }} />
+
+                <FilterPills options={t.mediumOpts} selected={selectedMediums} onSelect={toggleMedium} multi />
+                <FilterPills options={t.mediaOpts} selected={filters.media} onSelect={(i) => toggleFilter("media", i)} />
+                <FilterPills options={t.layoutOpts} selected={filters.layout} onSelect={(i) => toggleFilter("layout", i)} />
+                <FilterPills options={t.orderOpts} selected={filters.order} onSelect={(i) => toggleFilter("order", i)} />
               </div>
             )}
 
@@ -1544,6 +1614,7 @@ export default function PortfolioSite() {
                     gridTemplateColumns: `repeat(${filters.layout === 2 ? 2 : 4}, 1fr)`,
                     gridAutoRows: "8px",
                     columnGap: 28,
+                    rowGap: 28,
                   }}
                 >
                   {sortedArtworks.map((a) => (
