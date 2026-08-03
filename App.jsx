@@ -511,16 +511,31 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
   );
 }
 
-function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1 }) {
+function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
+  const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image, once loaded
+
+  const handleLoad = (e) => {
+    const { naturalWidth, naturalHeight } = e.target;
+    if (naturalWidth && naturalHeight) setNaturalRatio(naturalWidth / naturalHeight);
+  };
+
+  // Once we know both the column's pixel width and the image's real aspect ratio,
+  // size the box to match the image exactly — no cropping, no letterboxing.
+  // Until then (placeholders, or before the image finishes loading), fall back to
+  // the manual "span" value from the data.
+  const span =
+    naturalRatio && columnWidth
+      ? Math.ceil(columnWidth / naturalRatio / 8)
+      : Math.round(artwork.span * spanScale);
 
   return (
     <div
       ref={ref}
       onClick={() => onOpen(artwork)}
       style={{
-        gridRowEnd: `span ${Math.round(artwork.span * spanScale)}`,
+        gridRowEnd: `span ${span}`,
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(18px)",
         transition: "opacity 0.7s ease, transform 0.7s ease",
@@ -550,7 +565,8 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1 }) 
           <img
             src={artwork.image}
             alt={artwork.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            onLoad={handleLoad}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         ) : (
           <Plus
@@ -578,6 +594,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1 }) 
 
 function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
   const [index, setIndex] = useState(0);
+  const [ratio, setRatio] = useState(16 / 10); // matches current image once loaded; sensible default before that
   const safeIndex = artworks.length ? index % artworks.length : 0;
   const current = artworks[safeIndex];
 
@@ -585,10 +602,19 @@ function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
     if (index >= artworks.length) setIndex(0);
   }, [artworks.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    setRatio(16 / 10); // reset to default until the new slide's image reports its real ratio
+  }, [safeIndex]);
+
   if (!current) return null;
 
   const prev = () => setIndex((i) => (i - 1 + artworks.length) % artworks.length);
   const next = () => setIndex((i) => (i + 1) % artworks.length);
+
+  const handleLoad = (e) => {
+    const { naturalWidth, naturalHeight } = e.target;
+    if (naturalWidth && naturalHeight) setRatio(naturalWidth / naturalHeight);
+  };
 
   const arrowStyle = {
     position: "absolute",
@@ -612,7 +638,7 @@ function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: "16 / 10",
+          aspectRatio: `${ratio}`,
           border: "1px solid #D5D5E4",
           background: "#FAFAF8",
           display: "flex",
@@ -625,7 +651,12 @@ function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
         onClick={() => onOpen(current)}
       >
         {current.image ? (
-          <img src={current.image} alt={current.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img
+            src={current.image}
+            alt={current.title}
+            onLoad={handleLoad}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
         ) : (
           <Plus size={28} strokeWidth={1} style={{ color: "#C7C7C2" }} />
         )}
@@ -1459,6 +1490,24 @@ export default function PortfolioSite() {
     cardFrameRefs.current[id] = el;
   };
 
+  // Measure the gallery's available width so ArtworkCard can size each box to match
+  // its image's real aspect ratio (no cropping), instead of a fixed guess.
+  const galleryRef = useRef(null);
+  const [galleryWidth, setGalleryWidth] = useState(0);
+  useLayoutEffect(() => {
+    const el = galleryRef.current;
+    if (!el) return;
+    const update = () => setGalleryWidth(el.getBoundingClientRect().width);
+    update();
+    const obs = new ResizeObserver(update);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [currentSection, filters.layout]);
+
+  const galleryColumns = filters.layout === 2 ? 2 : 4;
+  const galleryGap = 28;
+  const columnWidth = galleryWidth ? (galleryWidth - galleryGap * (galleryColumns - 1)) / galleryColumns : 0;
+
   return (
     <div
       style={{
@@ -1747,9 +1796,10 @@ export default function PortfolioSite() {
                 />
               ) : (
                 <div
+                  ref={galleryRef}
                   style={{
                     display: "grid",
-                    gridTemplateColumns: `repeat(${filters.layout === 2 ? 2 : 4}, 1fr)`,
+                    gridTemplateColumns: `repeat(${galleryColumns}, 1fr)`,
                     gridAutoRows: "8px",
                     columnGap: 28,
                     rowGap: 28,
@@ -1763,6 +1813,7 @@ export default function PortfolioSite() {
                       onOpen={openWork}
                       frameRef={registerFrame(a.id)}
                       spanScale={filters.layout === 2 ? 2 : 1}
+                      columnWidth={columnWidth}
                     />
                   ))}
                 </div>
