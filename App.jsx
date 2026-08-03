@@ -15,8 +15,8 @@ import { Plus, Send, ChevronRight, ChevronLeft } from "lucide-react";
 
   ADDING REAL ARTWORK:
   Edit the ARTWORKS array below. Give each piece an "image" URL and it will
-  replace the placeholder box automatically, cropped (not stretched) to fit
-  whatever size you set via "span".
+  replace the placeholder box automatically. On the Works grid, each image keeps
+  its natural aspect ratio; the masonry card height is measured automatically.
 */
 
 const translations = {
@@ -283,7 +283,7 @@ const STUDY_FIELD_DEFS = [
   { key: "keyWords", labelKey: "keyWordsLabel", group: "projects" },
   { key: "references", labelKey: "referencesLabel", group: "works" },
 ];
-// "span" controls the box's relative height in the masonry grid (grid rows of 8px each).
+// "span" is now only a temporary fallback before an image/card is measured; real card height is automatic.
 // "mediumIndex" maps to mediumOpts: 0 = Painting, 1 = Sculpture, 2 = Sketch.
 // "curated" flags pieces to show when the SELECTIVE media mode is active.
 // "medium"/"dimension"/"description" and "detailImages" populate the works-detail page
@@ -514,21 +514,31 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
 function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
-  const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image, once loaded
+  const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image
+  const contentRef = useRef(null);
+  const [contentHeight, setContentHeight] = useState(0);
 
   const handleLoad = (e) => {
     const { naturalWidth, naturalHeight } = e.target;
     if (naturalWidth && naturalHeight) setNaturalRatio(naturalWidth / naturalHeight);
   };
 
-  // Once we know both the column's pixel width and the image's real aspect ratio,
-  // size the box to match the image exactly — no cropping, no letterboxing.
-  // Until then (placeholders, or before the image finishes loading), fall back to
-  // the manual "span" value from the data.
-  const span =
-    naturalRatio && columnWidth
-      ? Math.ceil(columnWidth / naturalRatio / 8)
-      : Math.round(artwork.span * spanScale);
+  // Measure the card's NATURAL content height (image at its real aspect ratio +
+  // optional caption + bottom spacing), then convert that height to 8px masonry rows.
+  // The gallery itself uses rowGap: 0; the 28px visual gap lives inside each card.
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const update = () => setContentHeight(el.getBoundingClientRect().height);
+    update();
+    const obs = new ResizeObserver(update);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [showCaption, naturalRatio, columnWidth]);
+
+  const span = contentHeight
+    ? Math.max(1, Math.ceil(contentHeight / 8))
+    : Math.max(1, Math.round(artwork.span * spanScale));
 
   return (
     <div
@@ -539,55 +549,57 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(18px)",
         transition: "opacity 0.7s ease, transform 0.7s ease",
-        display: "flex",
-        flexDirection: "column",
         cursor: "pointer",
-        paddingBottom: 28,
         boxSizing: "border-box",
+        alignSelf: "start",
       }}
     >
-      <div
-        ref={frameRef}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: `1px solid ${hover ? "#1A1B4B" : "#D5D5E4"}`,
-          background: "#FAFAF8",
-          transition: "border-color 0.3s ease",
-          overflow: "hidden",
-        }}
-      >
-        {artwork.image ? (
-          <img
-            src={artwork.image}
-            alt={artwork.title}
-            onLoad={handleLoad}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
-        ) : (
-          <Plus
-            size={20}
-            strokeWidth={1}
-            style={{
-              color: hover ? "#1A1B4B" : "#C7C7C2",
-              transition: "color 0.3s ease, transform 0.3s ease",
-              transform: hover ? "scale(1.15)" : "scale(1)",
-            }}
-          />
+      <div ref={contentRef} style={{ paddingBottom: 28, boxSizing: "border-box" }}>
+        <div
+          ref={frameRef}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          style={{
+            width: "100%",
+            aspectRatio: naturalRatio ? `${naturalRatio}` : "4 / 3",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: `1px solid ${hover ? "#1A1B4B" : "#D5D5E4"}`,
+            background: "#FAFAF8",
+            transition: "border-color 0.3s ease",
+            overflow: "hidden",
+            boxSizing: "border-box",
+          }}
+        >
+          {artwork.image ? (
+            <img
+              src={artwork.image}
+              alt={artwork.title}
+              onLoad={handleLoad}
+              style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+            />
+          ) : (
+            <Plus
+              size={20}
+              strokeWidth={1}
+              style={{
+                color: hover ? "#1A1B4B" : "#C7C7C2",
+                transition: "color 0.3s ease, transform 0.3s ease",
+                transform: hover ? "scale(1.15)" : "scale(1)",
+              }}
+            />
+          )}
+        </div>
+        {showCaption && (
+          <div style={{ paddingTop: 10, fontFamily: "'Work Sans', sans-serif" }}>
+            <div style={{ fontSize: 13, letterSpacing: "0.01em", color: "#1A1B4B" }}>
+              {artwork.title}
+            </div>
+            <div style={{ fontSize: 12, color: "#9A9A94" }}>{artwork.date}</div>
+          </div>
         )}
       </div>
-      {showCaption && (
-        <div style={{ paddingTop: 10, fontFamily: "'Work Sans', sans-serif" }}>
-          <div style={{ fontSize: 13, letterSpacing: "0.01em", color: "#1A1B4B" }}>
-            {artwork.title}
-          </div>
-          <div style={{ fontSize: 12, color: "#9A9A94" }}>{artwork.date}</div>
-        </div>
-      )}
     </div>
   );
 }
@@ -1802,7 +1814,7 @@ export default function PortfolioSite() {
                     gridTemplateColumns: `repeat(${galleryColumns}, 1fr)`,
                     gridAutoRows: "8px",
                     columnGap: 28,
-                    rowGap: 28,
+                    rowGap: 0,
                   }}
                 >
                   {sortedArtworks.map((a) => (
