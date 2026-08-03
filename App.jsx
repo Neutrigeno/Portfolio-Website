@@ -1552,6 +1552,22 @@ export default function PortfolioSite() {
         }
       `}</style>
 
+      {/* Upper Works-filter divider — spans the entire viewport, including the sidebar. */}
+      {currentSection === "works" && !selectedWork && (
+        <div
+          style={{
+            position: "absolute",
+            top: 56,
+            left: 0,
+            right: 0,
+            height: 1,
+            background: "#E2E2ED",
+            pointerEvents: "none",
+            zIndex: 2,
+          }}
+        />
+      )}
+
       {/* Single continuous horizontal divider — drawn once, spanning full width, so it's
           guaranteed pixel-straight where it crosses the sidebar's vertical line, instead of
           relying on two separate borders lining up exactly. */}
@@ -1730,20 +1746,6 @@ export default function PortfolioSite() {
           >
             {currentSection === "works" && (
               <>
-                {/* Full-width divider above the filter-option row. It spans the entire
-                    Works content area (from the sidebar edge to the right edge). */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 56,
-                    left: 0,
-                    right: 0,
-                    height: 1,
-                    background: "#E2E2ED",
-                    pointerEvents: "none",
-                  }}
-                />
-
                 <div
                   style={{
                     width: "100%",
@@ -1766,6 +1768,7 @@ export default function PortfolioSite() {
                     letterSpacing: "0.14em",
                     fontFamily: "'Jost', sans-serif",
                     color: "#1A1B4B",
+                    transform: "translateY(6px)",
                   }}
                 >
                   {t.content}
@@ -1779,6 +1782,7 @@ export default function PortfolioSite() {
                     letterSpacing: "0.14em",
                     fontFamily: "'Jost', sans-serif",
                     color: "#1A1B4B",
+                    transform: "translateY(6px)",
                   }}
                 >
                   {t.context}
