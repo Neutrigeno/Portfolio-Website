@@ -1346,7 +1346,17 @@ function FilterLabel({ label }) {
 function FilterPills({ options, selected, onSelect, multi }) {
   const isActive = (i) => (multi ? selected.includes(i) : selected === i);
   return (
-    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 4 }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "nowrap",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 4,
+        whiteSpace: "nowrap",
+      }}
+    >
       {options.map((opt, i) => (
         <button
           key={opt}
@@ -1715,18 +1725,38 @@ export default function PortfolioSite() {
               display: "flex",
               alignItems: "center",
               boxSizing: "border-box",
+              position: "relative",
             }}
           >
             {currentSection === "works" && (
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(4, auto)",
-                  columnGap: 40,
-                  rowGap: 4,
-                  overflowX: "auto",
-                }}
-              >
+              <>
+                {/* Full-width divider above the filter-option row. It spans the entire
+                    Works content area (from the sidebar edge to the right edge). */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 56,
+                    left: 0,
+                    right: 0,
+                    height: 1,
+                    background: "#E2E2ED",
+                    pointerEvents: "none",
+                  }}
+                />
+
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+                    gridTemplateRows: "26px 30px 48px",
+                    columnGap: 40,
+                    rowGap: 0,
+                    alignItems: "center",
+                    overflowX: "auto",
+                  }}
+                >
                 <div
                   style={{
                     gridColumn: "1 / 3",
@@ -1759,13 +1789,12 @@ export default function PortfolioSite() {
                 <FilterLabel label={t.layout} />
                 <FilterLabel label={t.order} />
 
-                <div style={{ gridColumn: "1 / -1", borderTop: "1px solid #E2E2ED", margin: 0 }} />
-
                 <FilterPills options={t.mediumOpts} selected={selectedMediums} onSelect={toggleMedium} multi />
                 <FilterPills options={t.mediaOpts} selected={filters.media} onSelect={(i) => toggleFilter("media", i)} />
                 <FilterPills options={t.layoutOpts} selected={filters.layout} onSelect={(i) => toggleFilter("layout", i)} />
                 <FilterPills options={t.orderOpts} selected={filters.order} onSelect={(i) => toggleFilter("order", i)} />
-              </div>
+                </div>
+              </>
             )}
 
             {currentSection === "about" && (
