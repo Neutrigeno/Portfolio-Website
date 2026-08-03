@@ -291,29 +291,167 @@ const STUDY_FIELD_DEFS = [
 // and a "caption" — leave image null to keep the placeholder box.
 const ARTWORKS = [
   {
-    id: 1,
-    title: "Untitled Figure",
-    date: "2023",
-    span: 62,
-    image: null,
-    mediumIndex: 0,
-    curated: true,
-    medium: "Bamboo, silk, thread",
-    dimension: '72 × 34 × 20 in',
-    description: "Description...\ncan bring in massive money in the short term,\nbut in the long run, I wondered what impact\nthis would have on the art world.",
+    id: 1, title: "The Woman in the Bathtub", date: "2023", span: 30, image: "/images/1026-001-001.jpg",
+    mediumIndex: 0, curated: true, medium: "Oil on Canvas", dimension: "18 × 20 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-001.jpg", caption: "" }], // 1026-001-001
+  },
+  {
+    id: 2, title: "Vacant Space", date: "2025", span: 34, image: "/images/1026-001-002.jpg",
+    mediumIndex: 0, curated: false, medium: "Oil on Canvas", dimension: "30 × 40 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-002.jpg", caption: "" }], // 1026-001-002
+  },
+  {
+    id: 3, title: "Hallway", date: "2024", span: 30, image: "/images/1026-001-003a.jpg",
+    mediumIndex: 0, curated: false, medium: "Acrylic on Canvas", dimension: "40 × 30 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-003a.jpg", caption: "" }], // 1026-001-003a
+  },
+  {
+    id: 4, title: "Hallway (Variation on the Lighting)", date: "2024", span: 30, image: "/images/1026-001-003b.jpg",
+    mediumIndex: 0, curated: false, medium: "Acrylic on Canvas", dimension: "40 × 30 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-003b.jpg", caption: "" }], // 1026-001-003b
+  },
+  {
+    id: 5, title: "Measurements for the 'Hallway'", date: "2024", span: 24, image: "/images/1026-001-003c.jpg",
+    mediumIndex: 2, curated: false, medium: "Graphite on Paper", dimension: "15 × 10 in",
+    description: "",
     detailImages: [
-      { image: null, caption: "Description, copyright." },
-      { image: null, caption: "Description, copyright." },
-      { image: null, caption: "Description, copyright." },
+      { image: "/images/1026-001-003c.jpg", caption: "Page 2" }, // 1026-001-003c
+      { image: "/images/1026-001-003d.jpg", caption: "Page 3" }, // 1026-001-003d (not in original catalog, added from upload)
     ],
   },
-  { id: 2, title: "Study No. 4", date: "2022", span: 40, image: null, mediumIndex: 2, curated: false },
-  { id: 3, title: "Reclining Form", date: "2024", span: 86, image: null, mediumIndex: 1, curated: true },
-  { id: 4, title: "Small Study", date: "2021", span: 38, image: null, mediumIndex: 2, curated: false },
-  { id: 5, title: "Continuum", date: "2023", span: 86, image: null, mediumIndex: 0, curated: true },
-  { id: 6, title: "Interior I", date: "2020", span: 64, image: null, mediumIndex: 0, curated: false },
-  { id: 7, title: "Interior II", date: "2020", span: 64, image: null, mediumIndex: 1, curated: false },
-  { id: 8, title: "Passage", date: "2024", span: 80, image: null, mediumIndex: 2, curated: false },
+  {
+    id: 6, title: "The Gallery", date: "2024", span: 30, image: "/images/1026-001-004a.jpg",
+    mediumIndex: 0, curated: false, medium: "Acrylic on Canvas", dimension: "30 × 40 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-004a.jpg", caption: "" }], // 1026-001-004a
+  },
+  {
+    id: 7, title: "The Gallery (Variation on the Lighting)", date: "2024", span: 30, image: "/images/1026-001-004b.jpg",
+    mediumIndex: 0, curated: false, medium: "Acrylic on Canvas", dimension: "40 × 30 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-004b.jpg", caption: "" }], // 1026-001-004b
+  },
+  {
+    id: 8, title: "Living Room I", date: "2024", span: 30, image: "/images/1026-001-005a.jpg",
+    mediumIndex: 0, curated: false, medium: "Acrylic on Canvas", dimension: "40 × 30 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-005a.jpg", caption: "" }], // 1026-001-005a
+  },
+  {
+    // Merged 005b + 005c — both are lighting variations of the same piece ("Ver 2" / "Ver 3").
+    id: 9, title: "Living Room I (Variation on the Lighting)", date: "2024", span: 30, image: "/images/1026-001-005b.jpg",
+    mediumIndex: 0, curated: false, medium: "Acrylic on Canvas", dimension: "40 × 30 in",
+    description: "",
+    detailImages: [
+      { image: "/images/1026-001-005b.jpg", caption: "Version 2" }, // 1026-001-005b
+      { image: "/images/1026-001-005c.jpg", caption: "Version 3" }, // 1026-001-005c (not in original catalog, added from upload)
+    ],
+  },
+  {
+    // Merged from 006a + 015a/b/c — same title, dimensions, and year (see note to confirm).
+    // Only 006a is still missing.
+    id: 10, title: "Living Room II", date: "2025", span: 30, image: "/images/1026-001-015b.jpg",
+    mediumIndex: 0, curated: true, medium: "Acrylic and threads on Canvas", dimension: "40 × 30 in",
+    description: "",
+    detailImages: [
+      { image: null, caption: "" }, // 1026-001-006a
+      { image: "/images/1026-001-015a.jpg", caption: "" }, // 1026-001-015a
+      { image: "/images/1026-001-015b.jpg", caption: "" }, // 1026-001-015b
+      { image: "/images/1026-001-015c.jpg", caption: "" }, // 1026-001-015c
+    ],
+  },
+  {
+    id: 11, title: "Perspective of Living Room on Canvas", date: "2025", span: 40, image: "/images/1026-001-006.jpg",
+    mediumIndex: 0, curated: false, medium: "Threads and canvas", dimension: "96 × 40 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-006.jpg", caption: "" }], // 1026-001-006
+  },
+  {
+    id: 12, title: "Perspective of Living Room", date: "2025", span: 28, image: null,
+    mediumIndex: 2, curated: false, medium: "Digital Image", dimension: "24 × 44 in",
+    description: "",
+    detailImages: [{ image: null, caption: "" }], // 1026-001-007 — not yet uploaded
+  },
+  {
+    id: 13, title: "Perspective of Living Room (Final Extension)", date: "2025", span: 28, image: "/images/1026-001-008.jpg",
+    mediumIndex: 2, curated: false, medium: "Digital Image", dimension: "24 × 44 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-008.jpg", caption: "" }], // 1026-001-008
+  },
+  {
+    id: 14, title: "Woman Posing Upright", date: "2025", span: 36, image: "/images/1026-001-009a.jpg",
+    mediumIndex: 2, curated: false, medium: "Charcoal", dimension: "30 × 50 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-009a.jpg", caption: "" }], // 1026-001-009a
+  },
+  {
+    id: 15, title: "Woman Posing Upright (With Digital Rendition)", date: "2025", span: 36, image: "/images/1026-001-009b.jpg",
+    mediumIndex: 2, curated: false, medium: "Digital Image", dimension: "",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-009b.jpg", caption: "" }], // 1026-001-009b
+  },
+  {
+    id: 16, title: "Woman in Reclined Pose", date: "2025", span: 26, image: "/images/1026-001-010.jpg",
+    mediumIndex: 2, curated: false, medium: "Charcoal", dimension: "30 × 50 in",
+    description: "",
+    detailImages: [{ image: "/images/1026-001-010.jpg", caption: "" }], // 1026-001-010
+  },
+  {
+    // Merged from 011a–011g — same title/medium/date across all seven Object IDs.
+    id: 17, title: "Agony", date: "2023", span: 34, image: "/images/1026-001-011a.jpg",
+    mediumIndex: 1, curated: true,
+    medium: "Mixed Media; cardboard, acrylics, plastic vinyl, acrylic liquid, polyester cotton, acrylic paints",
+    dimension: "",
+    description: "",
+    detailImages: [
+      { image: "/images/1026-001-011a.jpg", caption: "" }, // 1026-001-011a
+      { image: "/images/1026-001-011b.jpg", caption: "" }, // 1026-001-011b
+      { image: "/images/1026-001-011c.jpg", caption: "" }, // 1026-001-011c
+      { image: "/images/1026-001-011d.jpg", caption: "" }, // 1026-001-011d
+      { image: "/images/1026-001-011e.jpg", caption: "" }, // 1026-001-011e
+      { image: "/images/1026-001-011f.jpg", caption: "" }, // 1026-001-011f
+      { image: "/images/1026-001-011g.jpg", caption: "" }, // 1026-001-011g
+    ],
+  },
+  {
+    // Merged from 012a–012c — description was cut off in the PDF, needs the full text.
+    id: 18, title: "The Pedestal", date: "2024", span: 34, image: "/images/1026-001-012a.jpg",
+    mediumIndex: 1, curated: true,
+    medium: "Mixed Media; wooden frames, rhinestones, nylon fabric",
+    dimension: "",
+    description: "", // TODO: PDF text cut off after "Furthermore, in her work Pedes..."
+    detailImages: [
+      { image: "/images/1026-001-012a.jpg", caption: "" }, // 1026-001-012a
+      { image: "/images/1026-001-012b.jpg", caption: "" }, // 1026-001-012b
+      { image: "/images/1026-001-012c.jpg", caption: "" }, // 1026-001-012c
+    ],
+  },
+  {
+    id: 19, title: "Balance", date: "2024", span: 32, image: "/images/1026-001-013a.jpg",
+    mediumIndex: 1, curated: false, medium: "Metal", dimension: "20 × 15 × 17 in",
+    description: "",
+    detailImages: [
+      { image: "/images/1026-001-013a.jpg", caption: "" }, // 1026-001-013a
+      { image: "/images/1026-001-013b.jpg", caption: "" }, // 1026-001-013b, dated 5/10/2024
+    ],
+  },
+  {
+    // Merged from 014a–014c — same title/medium/dimension/date across all three.
+    id: 20, title: "Cave Painting", date: "2023", span: 32, image: "/images/1026-001-014a.jpg",
+    mediumIndex: 1, curated: false,
+    medium: "Mixed Media; tape, markers on acrylic panel, cardboard, grind beef",
+    dimension: "20 × 15 × 17 in",
+    description: "",
+    detailImages: [
+      { image: "/images/1026-001-014a.jpg", caption: "" }, // 1026-001-014a
+      { image: "/images/1026-001-014b.jpg", caption: "" }, // 1026-001-014b
+      { image: "/images/1026-001-014c.jpg", caption: "" }, // 1026-001-014c
+    ],
+  },
 ];
 
 function useFadeIn() {
