@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Plus, Send, ChevronRight, ChevronLeft } from "lucide-react";
+import { Analytics } from "@vercel/analytics/react";
 
 /*
   FONT NOTE:
@@ -1945,6 +1946,7 @@ export default function App() {
           </div>
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }
