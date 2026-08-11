@@ -618,7 +618,6 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
       ref={ref}
       onClick={() => onOpen(artwork)}
       style={{
-        gridRowEnd: `span ${span}`,
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(18px)",
         transition: "opacity 0.7s ease, transform 0.7s ease",
@@ -1603,6 +1602,15 @@ export default function App() {
   const galleryGap = 28;
   const columnWidth = galleryWidth ? (galleryWidth - galleryGap * (galleryColumns - 1)) / galleryColumns : 0;
 
+  // True masonry-style stacking: each column is an independent vertical flex stack.
+  // Items are assigned left-to-right by index (0→col 1, 1→col 2, etc.), so the
+  // next artwork in each column begins immediately after the artwork above it.
+  // This creates the staggered vertical starts shown in the reference screenshot.
+  const artworkColumns = Array.from({ length: galleryColumns }, () => []);
+  sortedArtworks.forEach((artwork, index) => {
+    artworkColumns[index % galleryColumns].push(artwork);
+  });
+
   return (
     <div
       style={{
@@ -1916,23 +1924,34 @@ export default function App() {
                 <div
                   ref={galleryRef}
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: `repeat(${galleryColumns}, 1fr)`,
-                    gridAutoRows: "8px",
-                    columnGap: 28,
-                    rowGap: 0,
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: galleryGap,
+                    width: "100%",
                   }}
                 >
-                  {sortedArtworks.map((a) => (
-                    <ArtworkCard
-                      key={a.id}
-                      artwork={a}
-                      showCaption={shouldShowCaption(a)}
-                      onOpen={openWork}
-                      frameRef={registerFrame(a.id)}
-                      spanScale={filters.layout === 2 ? 2 : 1}
-                      columnWidth={columnWidth}
-                    />
+                  {artworkColumns.map((column, columnIndex) => (
+                    <div
+                      key={columnIndex}
+                      style={{
+                        flex: "1 1 0",
+                        minWidth: 0,
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      {column.map((a) => (
+                        <ArtworkCard
+                          key={a.id}
+                          artwork={a}
+                          showCaption={shouldShowCaption(a)}
+                          onOpen={openWork}
+                          frameRef={registerFrame(a.id)}
+                          spanScale={filters.layout === 2 ? 2 : 1}
+                          columnWidth={columnWidth}
+                        />
+                      ))}
+                    </div>
                   ))}
                 </div>
               ))}
