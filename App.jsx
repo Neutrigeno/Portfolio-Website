@@ -141,38 +141,24 @@ const PROJECTS = [
     year: 2026, season: "SUMMER", type: "CURATORIAL",
     org: "HERITAGE MUSEUM OF ASIAN ART", location: "CHICAGO, IL US",
     title: "CONTEMPORARY REFLECTION: KOREAN SCHOLAR",
-    images: [],
-    purpose: "• Learn about contemporary Korean artists and how modern-contemporary art-historical frameworks, narrowed by traditional Korean art beliefs, impact their art practices.\n• Develop an outward-looking lens through which to view Korean art.\n• Learn how subcategories within an exhibition, such as catalog writing, contribute to delivering exhibition narratives to audiences.",
-    role: ["Catalog Writer", "Sub-Writer"],
-    team: "Heritage Museum of Asian Art executive team",
-    projectsField: "• Grant writing\n• Catalog writing\n• Studio visit: interview",
-    goal: "• Earn grants to support the exhibition.\n• Make the exhibition possible and make the catalog essential to understanding the exhibition.",
-    procedure: "• Artist studio visit\n• Writing them down\n• Research on the historical time period\n• Connecting the historical narrative with artists' understanding of their work\n• Building up new questions\n• Grant writing on the side, cooperating with Director Ji",
-    skills: "Logical and persuasive writing skills; question-sorting skills",
-    impact: "",
-    experience: [],
-    takeaway: "",
-    institutionDesc: "Founded in 2014, the Heritage Museum of Asian Art showcases a wide range of art forms spanning many cultures and time periods of Asia. The museum's collection includes archaic and modern jades, Neolithic pottery, imperial porcelains, Chinese snuff bottles, scholar's objects, textiles, bronzes, and more. Classical Chinese furniture also adorns the galleries. The museum provides an interconnection between the arts and cultures of Asia for the residents of Chicago and visitors from all around the world.",
-    institutionLogo: null,
+    images: [], purpose: "", role: [], team: "", projectsField: "", goal: "", procedure: "", skills: "",
+    impact: "", experience: [], takeaway: "", institutionDesc: "", institutionLogo: null,
+  },
+  {
+    id: ++projectAutoId,
+    year: 2026, season: "WINTER", type: "CURATORIAL",
+    org: "CHICAGO PUBLIC LIBRARY", location: "CHICAGO, IL US",
+    title: "COLLECTION / CATEGORIZATION",
+    images: [], purpose: "", role: [], team: "", projectsField: "", goal: "", procedure: "", skills: "",
+    impact: "", experience: [], takeaway: "", institutionDesc: "", institutionLogo: null,
   },
   {
     id: ++projectAutoId,
     year: 2025, season: "WINTER", type: "CURATORIAL",
     org: "MINNEKIRKEN", location: "CHICAGO, IL US",
     title: "PROFESSIONAL PRACTICE",
-    images: [],
-    purpose: "• To present student artworks in a public, nontraditional exhibition space and create an opportunity for collective curatorial practice.\n• Develop a space that is already established and has its own context into an exhibition space by overcoming constraints and utilizing the existing equipment in the facility.",
-    role: ["Curator", "Artist"],
-    team: "10 students",
-    projectsField: "• Artwork preparation\n• Exhibition location setup",
-    goal: "To organize and install a cohesive group exhibition within Minnekirken while responding to the church's architectural conditions, safely handling artworks, and completing installation within a limited timeframe.",
-    procedure: "Selected placement → planned layout → prepared works → installed → promoted → documented → deinstalled",
-    skills: "Exhibition installation and deinstallation; artwork handling; spatial planning; collaborative decision-making; exhibition promotion; DSLR photography; digital archival organization",
-    impact: "",
-    experience: [],
-    takeaway: "Developed an understanding of how exhibition design changes when artworks are presented in a site with an existing architectural, cultural, and community identity. Learned to balance curatorial intentions with practical constraints—including space, installation time, artwork safety, and collaborative decision-making—while maintaining a coherent exhibition presentation. Utilized nontraditional gallery architectural elements to enhance the experience of the artwork.",
-    institutionDesc: "The neighborhood surrounding the church is typical of Chicago's North Side neighborhoods and reflects a diversity of languages and cultures. Minnekirken serves as a reminder of a neighborhood heritage long past, in which Scandinavians played a significant part. During the first half of this century, there were several Norwegian-language churches in the Logan Square area and over 20 Norwegian churches in the metropolitan area.\n\nMinnekirken, which means \"Memorial Church\" in Norwegian, was first built by Norwegian immigrants as Christ Church in 1912. In 1934, the name was changed to its present name, in part because of the war memorial that was dedicated that year in the center of the circular thoroughfare located across from the church.",
-    institutionLogo: null,
+    images: [], purpose: "", role: [], team: "", projectsField: "", goal: "", procedure: "", skills: "",
+    impact: "", experience: [], takeaway: "", institutionDesc: "", institutionLogo: null,
   },
   {
     id: ++projectAutoId,
@@ -183,22 +169,26 @@ const PROJECTS = [
       { image: "https://picsum.photos/seed/uima1/700/500", caption: "Installation view, Ukrainian Institute of Modern Art." },
       { image: "https://picsum.photos/seed/uima2/700/500", caption: "Detail, opening reception." },
     ],
-    purpose: "• To present artworks by artists from Ukrainian and international backgrounds cohesively and deliver an understanding of connections within the exhibition to audiences.\n• Learn about the impact that the notion of nationality attached to an artist has on the contemporary art world and what premises it brings to curatorial research and the decision-making process.\n• To learn about the collaborative process, unexpected things that happen, and how to reconcile opinions while creating the best outcome.\n• To learn about museum work through a museum setting.",
-    role: ["Student Curator", "Interpretive Designer"],
-    team: "Consisted of 7 graduate students from SAIC taking an Art History course",
-    projectsField: "• Putting up an exhibition\n• Translation\n• Brochure design",
-    goal: "Develop an exhibition layout, object relationships, and interpretive materials for a two-month public exhibition.",
-    procedure: "• Conducted curatorial research on 15 works by artists from Ukraine and the Ukrainian diaspora.\n• Collaborated with 6 other students on artwork selection, conceptual framing, and exhibition narrative.",
-    skills: "Collaborative skills; reflexive responses to unpredictable situations; group and individual schedule coordination and management; writing; artwork research; exhibition design; promotion",
-    impact: "",
+    purpose: "To learn about the perspectives of foreigners and scholars on the history and the ongoing interaction between South and North Korea.",
+    role: ["Simultaneous Interpretor", "Group Assistant"],
+    team: "",
+    projectsField: "",
+    goal: "",
+    procedure: "",
+    skills: "",
+    impact: "Assisted in organizing visits to seven historical Museums focused on North and South Korean history in Gosong, Gangwon province (KR).",
     experience: [
       {
-        left: "Experienced the full exhibition workflow from preparation and spatial planning through installation, public promotion, documentation, and deinstallation.",
-        right: "Worked within the constraints of a historic, functioning church rather than a purpose-built gallery, requiring the team to adapt exhibition decisions to an existing architectural and cultural environment.",
+        left: "Translating Korean historical & political jargons for non-Koreans",
+        right: "Reading news about topic relating to North Korea from both the perspective of Korea and United States through 매일경제(Meil Economy News), 동아일보 The Donga-Ilbo, CFR (Council of Foreign Relation), and BBC helped a lot.",
+      },
+      {
+        left: "Simultaneously translating fast-paced Museum docent tour",
+        right: "Additionally giving more precise translated context through writing.",
       },
     ],
-    takeaway: "Developed a time-management system, splitting individual and group schedules to keep track of individuals' schedules at a glance and understand group responsibilities and what to do in the next group meeting.\n\nGroup projects are all about preventing things that shouldn't happen from happening and making things that should happen happen by going beyond expectations to find the best person to do the work and always looking for alternatives.",
-    institutionDesc: "Founded in 1971, the museum preserves and promotes contemporary art as a shared expression of the Ukrainian and American experience. UIMA develops, utilizes, and encourages artistic talent through exhibitions, concerts, readings, lectures, and films to serve the cultural needs of the community and city, thereby strengthening cultural understanding and diversity.",
+    takeaway: "",
+    institutionDesc: "The Ministry of Unification oversees the formulation of policies related to unification, inter-Korean dialogue, exchange and cooperation, and humanitarian assistance; the analysis of North Korean affairs; unification education and public relations; and other matters concerning unification.",
     institutionLogo: null,
   },
   {
@@ -206,64 +196,16 @@ const PROJECTS = [
     year: 2024, season: "SUMMER", type: "INTERPRETATION",
     org: "KOREA MINISTRY OF UNIFICATION", location: "GOSEONG, GANGWON KR",
     title: "KOREA NORTH & SOUTH UNION PROGRAM",
-    images: [],
-    purpose: "To learn about the perspectives of foreigners and scholars on the history and ongoing interactions between South and North Korea.",
-    role: ["Simultaneous Interpreter", "Group Assistant"],
-    team: "",
-    projectsField: "",
-    goal: "",
-    procedure: "",
-    skills: "",
-    impact: "Assisted in organizing visits to seven historical museums focused on North and South Korean history in Goseong, Gangwon Province (KR).",
-    experience: [
-      {
-        left: "Language",
-        right: "Interpreted fast-paced museum docent tours on North and South Korean history for non-Korean participants, translating specialized historical and political terminology in real time.",
-      },
-      {
-        left: "Historical context",
-        right: "Supplemented simultaneous interpretation with written explanations when additional historical context or terminological precision was necessary.",
-      },
-      {
-        left: "Different audience perspectives",
-        right: "Prepared for interpretation by comparing Korean and international reporting and research—including Maeil Business Newspaper, The Dong-A Ilbo, the Council on Foreign Relations, and BBC—to understand how terminology and political events were framed for different audiences.",
-      },
-    ],
-    takeaway: "Developed an understanding that interpreting politically sensitive historical material requires more than direct linguistic translation: terminology must be researched, contextualized, and checked for unintended political implications. Learned to distinguish between translating a speaker's position accurately and introducing the interpreter's own interpretation, particularly when communicating contested historical and political subjects to international audiences.",
-    institutionDesc: "The Ministry of Unification oversees the formulation of policies related to unification, inter-Korean dialogue, exchange and cooperation, and humanitarian assistance; the analysis of North Korean affairs; unification education and public education; and other matters concerning unification.",
-    institutionLogo: null,
+    images: [], purpose: "", role: [], team: "", projectsField: "", goal: "", procedure: "", skills: "",
+    impact: "", experience: [], takeaway: "", institutionDesc: "", institutionLogo: null,
   },
   {
     id: ++projectAutoId,
     year: 2022, season: "FALL", type: "CURATORIAL",
     org: "INTERNATIONAL YOUTH EXCHANGE FOUNDATION", location: "SEONGNAM, GYEONGGI KR",
     title: "GLOBAL YOUTH IN ACTION",
-    images: [],
-    purpose: "• Help people who are unrecognized as people in need of help.\n• Build strong bonds between generations.\n• To raise awareness of overlooked social needs, particularly those of runaway youth, and encourage young people to support their peers through accessible everyday actions while promoting environmental sustainability.",
-    role: ["Exhibition Designer", "Idea Presenter"],
-    team: "Team of 4 high schoolers",
-    projectsField: "• Teen as Team by Team Home\n• Presenting the project to 100+ people through a role-played newscast\n• Designing a booth\n• Making progress\n• Making new project suggestions",
-    goal: "Raise awareness about UN Sustainable Development Goals, primarily among K–12 students, and initiate actions within these groups through achievable, daily goals.",
-    procedure: "Discussion → Proposal → Practice → Small presentation → Big presentation → Exhibition booth",
-    skills: "Collaborative skills",
-    impact: "Led the design of a sustainable system that upcycled donated clothing and books into funds, providing daily essentials for runaway youth while benefiting the planet. Established the presentation for an IYCEF Speech Contest and the exhibition design for the conference.\n\nPresented exhibition activities and donation methods targeting students and children and led over 100 participants a day.\n\nConstructed a 100% meaningful donation process by collecting 300+ pieces of clothing and 150+ books, reducing 1,850 lb of carbon.",
-    experience: [
-      {
-        left: "Idea",
-        right: "Worked in a four-person student team to develop a social-impact project from initial discussion and proposal through public presentation and exhibition.",
-      },
-      {
-        left: "System",
-        right: "Translated an abstract issue—support for runaway youth—into an accessible participation model in which students could contribute through ordinary actions such as donating used clothing and books.",
-      },
-      {
-        left: "Audience experience",
-        right: "Gained experience adapting the same project for multiple forms of communication, including proposals, small-group presentations, a role-played newscast for an audience of 100+, and an interactive exhibition booth for younger participants.",
-      },
-    ],
-    takeaway: "Learned that effective social-impact projects can reduce barriers to participation by connecting difficult or sensitive social issues to familiar, achievable actions. Developed an understanding of how a project can create multiple forms of value simultaneously: donated objects could be diverted from waste, converted into monetary value, used to support runaway youth, and serve as an entry point for educating other students about social and environmental issues.\n\nLearned to use exhibition design not only to present information but also to make an abstract social issue understandable and give visitors a concrete method of participation.",
-    institutionDesc: "The International Youth Cultural Exchange Federation (IYCEF) is an organization affiliated with the Ministry of Gender Equality and Family of the Republic of Korea. Through international NGO volunteer work, cultural activities, international education, and experiential programs for youth with and without disabilities worldwide, the organization aims to promote cultural exchange among young people and help them develop the international perspectives and insights necessary to become members of the global community. It also seeks to foster individuals who can contribute to international cooperation.",
-    institutionLogo: null,
+    images: [], purpose: "", role: [], team: "", projectsField: "", goal: "", procedure: "", skills: "",
+    impact: "", experience: [], takeaway: "", institutionDesc: "", institutionLogo: null,
   },
 ];
 
@@ -302,13 +244,8 @@ const STUDIES = [
   {
     id: ++studyAutoId,
     academic: ["Mathematics"], area: "Category Theories", images: [],
-    researchQuestion: "How can numerical values, similar to musical notation, be developed to measure the process of making an artwork from its production to its finished state?",
-    terminology: "",
-    scopeOfArea: "Category Theory, Mathematical Logic, Data Visualization, Ontology",
-    methodology: "Cross-reference the system and structure of musical notation.",
-    researchSignificance: "",
-    keyWords: "Pitch, rhythm, symmetry—reflection and translation, harmony, rotation, functions and transformations, cross-rhythm",
-    references: "",
+    researchQuestion: "", terminology: "", scopeOfArea: "", methodology: "",
+    researchSignificance: "", keyWords: "", references: "",
   },
   {
     id: ++studyAutoId,
@@ -323,24 +260,14 @@ const STUDIES = [
   {
     id: ++studyAutoId,
     academic: ["East Asian Art History & Culture"], area: "Korean Architectures from Joseon Period to Contemporary", images: [],
-    researchQuestion: "How can architectural tradition be understood as a continuously produced historical process rather than a fixed repertoire of inherited forms, and what does contemporary Korean architecture reveal about this distinction?\n\nDefinition — How have scholars and architects defined what counts as \"traditional Korean architecture\"?\nTranslation — How have those definitions been materialized in contemporary architecture?\nTemporality — Must architectural tradition refer backward to fixed historical forms, or can tradition itself continue to accumulate and change?",
-    terminology: "Yangok (洋屋), hanok (韓屋), youngjo (營造), geonchug (建築), buildings (chae) and courtyards (madang), International Style, Koreanness",
-    scopeOfArea: "• Korean temples and palaces from the Joseon period that currently exist or are documented in descriptive historical records.\n• East Asian architecture built during a similar time period to the Joseon era.\n• Western architecture built during a similar time period to the Joseon era.\n• The periods in which Western architectural terminology originated.",
-    methodology: "• Use visual data from existing architecture and historical documentary records to examine what traditional Korean architecture looks like and identify the frameworks shared across these architectural examples.\n• Conduct comparative analysis with other East Asian traditional architecture to identify the distinctive frameworks of Korean architecture.\n• Define differences among Korean architectural terms and previously associated architectural terms with similar definitions to identify how seemingly similar architectural environments were used and perceived differently.",
-    researchSignificance: "Applications of scholarly conversations to actual architectural buildings include the use of traditional materials in interior settings, the construction of houses as exact replicas of traditional architecture, and the presentation of palaces and temples built before the modern era through tourist sites. The essay argues for avoiding the replication of the past and instead developing a theorization of Korean architecture that can continue to accumulate and develop throughout contemporary and future settings.\n\n• The scenery of Korea and the rise of tourism\n• Nationalism and the advancement of social psychology\n• Toward what new significant research?",
-    keyWords: "Joseon period, 20th-century Saemaeul Undong (New Village Movement), hanok, giwa",
-    references: "",
+    researchQuestion: "", terminology: "", scopeOfArea: "", methodology: "",
+    researchSignificance: "", keyWords: "", references: "",
   },
   {
     id: ++studyAutoId,
     academic: ["Museum Administration", "Behavior Science"], area: "Artwork, Institution, and People", images: [],
-    researchQuestion: "How can a comprehensive understanding of museums be developed by bringing together all forms of museum data, including information about visitors, institutions, and artworks?",
-    terminology: "",
-    scopeOfArea: "Museums and galleries in Chicago, IL, U.S.; Manhattan, NY, U.S.; Seoul, South Korea; and, to a lesser extent, other provinces in South Korea, from 2024–2033.",
-    methodology: "• On-site visitor number tracking\n• Measuring different forms of data in museums",
-    researchSignificance: "",
-    keyWords: "",
-    references: "",
+    researchQuestion: "", terminology: "", scopeOfArea: "", methodology: "",
+    researchSignificance: "", keyWords: "", references: "",
   },
 ];
 
@@ -618,6 +545,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
       ref={ref}
       onClick={() => onOpen(artwork)}
       style={{
+        gridRowEnd: `span ${span}`,
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(18px)",
         transition: "opacity 0.7s ease, transform 0.7s ease",
@@ -1252,7 +1180,7 @@ function ProjectField({ def, project, t }) {
 
           {def.kind === "institution" && (
             <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap" }}>
-              <p style={{ flex: "1 1 380px", fontSize: 13, color: "#333333", lineHeight: 1.7, margin: 0, whiteSpace: "pre-line" }}>
+              <p style={{ flex: "1 1 380px", fontSize: 13, color: "#333333", lineHeight: 1.7, margin: 0 }}>
                 {project.institutionDesc}
               </p>
               <div style={{ width: 64, height: 64, flexShrink: 0 }}>
@@ -1262,7 +1190,7 @@ function ProjectField({ def, project, t }) {
           )}
 
           {!def.kind && (
-            <p style={{ fontSize: 13, color: "#333333", lineHeight: 1.7, margin: 0, maxWidth: 640, whiteSpace: "pre-line" }}>{project[def.key]}</p>
+            <p style={{ fontSize: 13, color: "#333333", lineHeight: 1.7, margin: 0, maxWidth: 640 }}>{project[def.key]}</p>
           )}
         </div>
       )}
@@ -1305,7 +1233,7 @@ function FieldAccordion({ item, fieldDefs, t, emptyMessage }) {
 }
 
 function ProjectsBody({ lang, t }) {
-  const [selectedId, setSelectedId] = useState(PROJECTS[2].id); // default to the fully-populated example row
+  const [selectedId, setSelectedId] = useState(PROJECTS[3].id); // default to the fully-populated example row
   const project = PROJECTS.find((p) => p.id === selectedId);
   const colTemplate = "56px 74px 110px 1.4fr 160px 1.6fr 28px";
 
@@ -1453,7 +1381,7 @@ function FilterPills({ options, selected, onSelect, multi }) {
   );
 }
 
-export default function App() {
+export default function PortfolioSite() {
   const [lang, setLang] = useState("en");
   const [selectedNav, setSelectedNav] = useState(0); // index into navKeys
   const [selectedMediums, setSelectedMediums] = useState([0]); // multi-select, at least 1 required
@@ -1601,15 +1529,6 @@ export default function App() {
   const galleryColumns = filters.layout === 2 ? 2 : 4;
   const galleryGap = 28;
   const columnWidth = galleryWidth ? (galleryWidth - galleryGap * (galleryColumns - 1)) / galleryColumns : 0;
-
-  // True masonry-style stacking: each column is an independent vertical flex stack.
-  // Items are assigned left-to-right by index (0→col 1, 1→col 2, etc.), so the
-  // next artwork in each column begins immediately after the artwork above it.
-  // This creates the staggered vertical starts shown in the reference screenshot.
-  const artworkColumns = Array.from({ length: galleryColumns }, () => []);
-  sortedArtworks.forEach((artwork, index) => {
-    artworkColumns[index % galleryColumns].push(artwork);
-  });
 
   return (
     <div
@@ -1924,34 +1843,23 @@ export default function App() {
                 <div
                   ref={galleryRef}
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: galleryGap,
-                    width: "100%",
+                    display: "grid",
+                    gridTemplateColumns: `repeat(${galleryColumns}, 1fr)`,
+                    gridAutoRows: "8px",
+                    columnGap: 28,
+                    rowGap: 0,
                   }}
                 >
-                  {artworkColumns.map((column, columnIndex) => (
-                    <div
-                      key={columnIndex}
-                      style={{
-                        flex: "1 1 0",
-                        minWidth: 0,
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      {column.map((a) => (
-                        <ArtworkCard
-                          key={a.id}
-                          artwork={a}
-                          showCaption={shouldShowCaption(a)}
-                          onOpen={openWork}
-                          frameRef={registerFrame(a.id)}
-                          spanScale={filters.layout === 2 ? 2 : 1}
-                          columnWidth={columnWidth}
-                        />
-                      ))}
-                    </div>
+                  {sortedArtworks.map((a) => (
+                    <ArtworkCard
+                      key={a.id}
+                      artwork={a}
+                      showCaption={shouldShowCaption(a)}
+                      onOpen={openWork}
+                      frameRef={registerFrame(a.id)}
+                      spanScale={filters.layout === 2 ? 2 : 1}
+                      columnWidth={columnWidth}
+                    />
                   ))}
                 </div>
               ))}
