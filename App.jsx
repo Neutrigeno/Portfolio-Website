@@ -180,8 +180,16 @@ const PROJECTS = [
     org: "UKRAINIAN INSTITUTE OF MODERN ART", location: "CHICAGO, IL US",
     title: "AFTER LINE, BEFORE FORM",
     images: [
-      { image: "https://picsum.photos/seed/uima1/700/500", caption: "Installation view, Ukrainian Institute of Modern Art." },
-      { image: "https://picsum.photos/seed/uima2/700/500", caption: "Detail, opening reception." },
+      {
+        image: "/images/After Line, Before Form Poster.jpg",
+        caption: "After Line, Before Form Poster",
+        aspectRatio: "1179 / 1526",
+      },
+      {
+        image: "/images/After Line, Before Form Brochure Front.png",
+        caption: "After Line, Before Form Brochure Front",
+        aspectRatio: "2448 / 1584",
+      },
     ],
     purpose: "• To present artworks by artists from Ukrainian and international backgrounds cohesively and deliver an understanding of connections within the exhibition to audiences.\n• Learn about the impact that the notion of nationality attached to an artist has on the contemporary art world and what premises it brings to curatorial research and the decision-making process.\n• To learn about the collaborative process, unexpected things that happen, and how to reconcile opinions while creating the best outcome.\n• To learn about museum work through a museum setting.",
     role: ["Student Curator", "Interpretive Designer"],
@@ -206,7 +214,18 @@ const PROJECTS = [
     year: 2024, season: "SUMMER", type: "INTERPRETATION",
     org: "KOREA MINISTRY OF UNIFICATION", location: "GOSEONG, GANGWON KR",
     title: "KOREA NORTH & SOUTH UNION PROGRAM",
-    images: [],
+    images: [
+      {
+        image: "/images/Location of Goseong County in Korea.png",
+        caption: "Location of Goseong County in Korea",
+        aspectRatio: "1132 / 1452",
+      },
+      {
+        image: "/images/Museums and historical sites visited in Goseong.png",
+        caption: "Museums and historical sites visited in Goseong",
+        aspectRatio: "1116 / 1428",
+      },
+    ],
     purpose: "To learn about the perspectives of foreigners and scholars on the history and ongoing interactions between South and North Korea.",
     role: ["Simultaneous Interpreter", "Group Assistant"],
     team: "",
@@ -322,7 +341,58 @@ const STUDIES = [
   },
   {
     id: ++studyAutoId,
-    academic: ["East Asian Art History & Culture"], area: "Korean Architectures from Joseon Period to Contemporary", images: [],
+    academic: ["East Asian Art History & Culture"], area: "Korean Architectures from Joseon Period to Contemporary", images: [
+      {
+        image: "/images/Figure 1, Figure 2.png",
+        caption: "Figure 1, Figure 2",
+        aspectRatio: "1094 / 418",
+      },
+      {
+        image: "/images/Figure 3, Figure 4.png",
+        caption: "Figure 3, Figure 4",
+        aspectRatio: "1080 / 436",
+      },
+      {
+        image: "/images/Figure 6, Figure 7.png",
+        caption: "Figure 6, Figure 7",
+        aspectRatio: "1082 / 740",
+      },
+      {
+        image: "/images/Figure 8, Figure 9.png",
+        caption: "Figure 8, Figure 9",
+        aspectRatio: "1294 / 1110",
+      },
+      {
+        image: "/images/Figure 10, Figure 11.png",
+        caption: "Figure 10, Figure 11",
+        aspectRatio: "1128 / 862",
+      },
+      {
+        image: "/images/Figure 12.png",
+        caption: "Figure 12",
+        aspectRatio: "1106 / 510",
+      },
+      {
+        image: "/images/Figure 13.png",
+        caption: "Figure 13",
+        aspectRatio: "972 / 538",
+      },
+      {
+        image: "/images/Study on Combination of Hanok Wall.png",
+        caption: "Study on Combination of Hanok Wall",
+        aspectRatio: "2048 / 1331",
+      },
+      {
+        image: "/images/Study on Tone of Hanok Architecture, 15x16, MDF, 2025.JPG",
+        caption: "Study on Tone of Hanok Architecture, 15x16, MDF, 2025",
+        aspectRatio: "2048 / 1674",
+      },
+      {
+        image: "/images/Study on Variations of Hanok Wall.png",
+        caption: "Study on Variations of Hanok Wall",
+        aspectRatio: "2048 / 1315",
+      }
+    ],
     researchQuestion: "How can architectural tradition be understood as a continuously produced historical process rather than a fixed repertoire of inherited forms, and what does contemporary Korean architecture reveal about this distinction?\n\nDefinition — How have scholars and architects defined what counts as \"traditional Korean architecture\"?\nTranslation — How have those definitions been materialized in contemporary architecture?\nTemporality — Must architectural tradition refer backward to fixed historical forms, or can tradition itself continue to accumulate and change?",
     terminology: "Yangok (洋屋), hanok (韓屋), youngjo (營造), geonchug (建築), buildings (chae) and courtyards (madang), International Style, Koreanness",
     scopeOfArea: "• Korean temples and palaces from the Joseon period that currently exist or are documented in descriptive historical records.\n• East Asian architecture built during a similar time period to the Joseon era.\n• Western architecture built during a similar time period to the Joseon era.\n• The periods in which Western architectural terminology originated.",
@@ -333,7 +403,43 @@ const STUDIES = [
   },
   {
     id: ++studyAutoId,
-    academic: ["Museum Administration", "Behavior Science"], area: "Artwork, Institution, and People", images: [],
+    academic: ["Museum Administration", "Behavior Science"], area: "Artwork, Institution, and People", images: [
+      {
+        image: "/images/Exhibition Space Model for Ceres by Storrs-Floorplan.png",
+        caption: "Exhibition Space Model for Ceres by Storrs-Floorplan",
+        aspectRatio: "794 / 1120",
+      },
+      {
+        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.1.png",
+        caption: "Exhibition Space Model for Ceres by Storrs-Take.1",
+        aspectRatio: "678 / 780",
+      },
+      {
+        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.2.png",
+        caption: "Exhibition Space Model for Ceres by Storrs-Take.2",
+        aspectRatio: "608 / 778",
+      },
+      {
+        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.3.png",
+        caption: "Exhibition Space Model for Ceres by Storrs-Take.3",
+        aspectRatio: "648 / 778",
+      },
+      {
+        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.4.png",
+        caption: "Exhibition Space Model for Ceres by Storrs-Take.4",
+        aspectRatio: "532 / 712",
+      },
+      {
+        image: "/images/The Ceres Mood Board - Page 1.png",
+        caption: "The Ceres Mood Board - Page 1",
+        aspectRatio: "1440 / 810",
+      },
+      {
+        image: "/images/The Ceres Mood Board - Page 2.png",
+        caption: "The Ceres Mood Board - Page 2",
+        aspectRatio: "1440 / 810",
+      }
+    ],
     researchQuestion: "How can a comprehensive understanding of museums be developed by bringing together all forms of museum data, including information about visitors, institutions, and artworks?",
     terminology: "",
     scopeOfArea: "Museums and galleries in Chicago, IL, U.S.; Manhattan, NY, U.S.; Seoul, South Korea; and, to a lesser extent, other provinces in South Korea, from 2024–2033.",
@@ -1117,7 +1223,7 @@ function ProjectRowGallery({ images }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 360 }}>
         {images.map((img, i) => (
           <div key={i}>
-            <ImageFrame src={img.image} alt={img.caption} aspectRatio="4 / 3" />
+            <ImageFrame src={img.image} alt={img.caption} aspectRatio={img.aspectRatio || "4 / 3"} />
             {img.caption && (
               <div style={{ marginTop: 8, fontSize: 11, fontStyle: "italic", color: "#9A9A94", fontFamily: "'Work Sans', sans-serif" }}>
                 {img.caption}
