@@ -186,7 +186,7 @@ const PROJECTS = [
         aspectRatio: "1179 / 1526",
       },
       {
-        image: "/images/Brochure-Front.png",
+        image: "/images/After Line, Before Form Brochure Front.png",
         caption: "After Line, Before Form Brochure Front",
         aspectRatio: "2448 / 1584",
       },
@@ -1214,6 +1214,8 @@ function AboutBody({ lang, t, sections }) {
 function ProjectRowGallery({ images, title }) {
   const [zoomedImage, setZoomedImage] = useState(null);
   const [page, setPage] = useState(0);
+  const [isDocked, setIsDocked] = useState(false);
+  const galleryAnchorRef = useRef(null);
   const pageSize = 5;
   const pageCount = Math.max(1, Math.ceil(images.length / pageSize));
   const visibleImages = images.slice(page * pageSize, page * pageSize + pageSize);
@@ -1221,28 +1223,76 @@ function ProjectRowGallery({ images, title }) {
   useEffect(() => setPage(0), [images]);
 
   useEffect(() => {
+    const anchor = galleryAnchorRef.current;
+    const scrollRegion = anchor?.closest("[data-scroll-region]");
+    if (!anchor || !scrollRegion) return;
+
+    const updateDockedState = () => {
+      const anchorRect = anchor.getBoundingClientRect();
+      const scrollRect = scrollRegion.getBoundingClientRect();
+      setIsDocked(anchorRect.bottom <= scrollRect.top + 1);
+    };
+
+    updateDockedState();
+    scrollRegion.addEventListener("scroll", updateDockedState, { passive: true });
+    window.addEventListener("resize", updateDockedState);
+    return () => {
+      scrollRegion.removeEventListener("scroll", updateDockedState);
+      window.removeEventListener("resize", updateDockedState);
+    };
+  }, [images]);
+
+  useEffect(() => {
     if (!zoomedImage) return;
-    const closeOnEscape = (event) => event.key === "Escape" && setZoomedImage(null);
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [zoomedImage]);
+    const handleLightboxKey = (event) => {
+      if (event.key === "Escape") setZoomedImage(null);
+      if (event.key === "ArrowLeft" && images.length > 1) {
+        const current = images.indexOf(zoomedImage);
+        setZoomedImage(images[(current - 1 + images.length) % images.length]);
+      }
+      if (event.key === "ArrowRight" && images.length > 1) {
+        const current = images.indexOf(zoomedImage);
+        setZoomedImage(images[(current + 1) % images.length]);
+      }
+    };
+    window.addEventListener("keydown", handleLightboxKey);
+    return () => window.removeEventListener("keydown", handleLightboxKey);
+  }, [zoomedImage, images]);
+
+  const showPreviousZoomedImage = (event) => {
+    event.stopPropagation();
+    const current = images.indexOf(zoomedImage);
+    setZoomedImage(images[(current - 1 + images.length) % images.length]);
+  };
+
+  const showNextZoomedImage = (event) => {
+    event.stopPropagation();
+    const current = images.indexOf(zoomedImage);
+    setZoomedImage(images[(current + 1) % images.length]);
+  };
 
   return (
     <>
       <div
-        style={{
-          width: "calc(100% + 88px)",
-          marginLeft: -44,
-          marginTop: 32,
+        ref={galleryAnchorRef}
+        style={{ width: "calc(100% + 88px)", marginLeft: -44, marginTop: 32, height: 104 }}
+      >
+        <div
+          style={{
+          width: isDocked ? "auto" : "100%",
           height: 104,
           boxSizing: "border-box",
           padding: "12px 44px",
           borderTop: "1px solid #E2E2ED",
           borderBottom: "1px solid #E2E2ED",
+          background: "rgba(255,255,255,0.97)",
           animation: "rowExpand 0.35s ease",
           display: "grid",
           gridTemplateColumns: "36px minmax(0, 1fr) 36px",
           alignItems: "center",
+          ...(isDocked
+            ? { position: "fixed", top: 0, left: 168, right: 0, zIndex: 20, backdropFilter: "blur(8px)" }
+            : { position: "relative" }),
         }}
       >
         <button type="button" onClick={() => setPage((p) => Math.max(0, p - 1))} aria-label="Show previous images"
@@ -1293,6 +1343,7 @@ function ProjectRowGallery({ images, title }) {
           style={{ gridColumn: 3, width: 32, height: 32, display: page < pageCount - 1 ? "flex" : "none", alignItems: "center", justifyContent: "center", border: 0, background: "transparent", color: "#1A1B4B", cursor: "pointer" }}>
           <ChevronRight size={22} strokeWidth={1.5} />
         </button>
+        </div>
       </div>
 
       {zoomedImage && (
@@ -1315,12 +1366,44 @@ function ProjectRowGallery({ images, title }) {
             cursor: "zoom-out",
           }}
         >
+          {images.length > 1 && (
+            <button
+              type="button"
+              onClick={showPreviousZoomedImage}
+              aria-label="Previous enlarged image"
+              style={{
+                position: "absolute", left: "clamp(18px, 4vw, 72px)", top: "50%",
+                transform: "translateY(-50%)", width: 50, height: 50, borderRadius: "50%",
+                border: "1px solid rgba(255,255,255,0.75)", background: "rgba(18,18,28,0.35)",
+                color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", zIndex: 2,
+              }}
+            >
+              <ChevronLeft size={28} strokeWidth={1.5} />
+            </button>
+          )}
           <img
             src={zoomedImage.image}
             alt={zoomedImage.caption || title}
             onClick={(event) => event.stopPropagation()}
             style={{ maxWidth: "92vw", maxHeight: "78vh", objectFit: "contain", display: "block" }}
           />
+          {images.length > 1 && (
+            <button
+              type="button"
+              onClick={showNextZoomedImage}
+              aria-label="Next enlarged image"
+              style={{
+                position: "absolute", right: "clamp(18px, 4vw, 72px)", top: "50%",
+                transform: "translateY(-50%)", width: 50, height: 50, borderRadius: "50%",
+                border: "1px solid rgba(255,255,255,0.75)", background: "rgba(18,18,28,0.35)",
+                color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", zIndex: 2,
+              }}
+            >
+              <ChevronRight size={28} strokeWidth={1.5} />
+            </button>
+          )}
           <div style={{ marginTop: 18, maxWidth: 720, color: "#FFFFFF", textAlign: "center" }}>
             <div style={{ fontSize: 15, letterSpacing: "0.03em" }}>{zoomedImage.caption || title}</div>
             {zoomedImage.description && <div style={{ marginTop: 8, fontSize: 12, lineHeight: 1.6, color: "#D9D9E0" }}>{zoomedImage.description}</div>}
@@ -2129,7 +2212,7 @@ export default function App() {
           </div>
 
           {/* Body — the only region that scrolls. Content depends on the active section. */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
+          <div data-scroll-region style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
             {currentSection === "works" &&
               (selectedWork ? (
                 <WorkDetail artwork={selectedWork} lang={lang} firstImageRef={detailFirstImageRef} />
