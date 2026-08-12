@@ -1233,9 +1233,10 @@ function ProjectRowGallery({ images, title }) {
         style={{
           width: "calc(100% + 88px)",
           marginLeft: -44,
-          height: 136,
+          marginTop: 18,
+          height: 104,
           boxSizing: "border-box",
-          padding: "18px 44px",
+          padding: "12px 44px",
           borderTop: "1px solid #E2E2ED",
           borderBottom: "1px solid #E2E2ED",
           animation: "rowExpand 0.35s ease",
@@ -1244,26 +1245,10 @@ function ProjectRowGallery({ images, title }) {
           alignItems: "center",
         }}
       >
-        <button
-          type="button"
-          onClick={() => setPage((current) => Math.max(0, current - 1))}
-          disabled={page === 0}
-          aria-label="Show previous images"
-          style={{
-            width: 32,
-            height: 32,
-            display: page > 0 ? "flex" : "none",
-            alignItems: "center",
-            justifyContent: "center",
-            border: 0,
-            background: "transparent",
-            color: "#1A1B4B",
-            cursor: "pointer",
-          }}
-        >
+        <button type="button" onClick={() => setPage((p) => Math.max(0, p - 1))} aria-label="Show previous images"
+          style={{ width: 32, height: 32, display: page > 0 ? "flex" : "none", alignItems: "center", justifyContent: "center", border: 0, background: "transparent", color: "#1A1B4B", cursor: "pointer" }}>
           <ChevronLeft size={22} strokeWidth={1.5} />
         </button>
-
         <div
           className="project-image-gallery"
           style={{
@@ -1286,7 +1271,7 @@ function ProjectRowGallery({ images, title }) {
             style={{
               appearance: "none",
               width: "clamp(104px, 10vw, 156px)",
-              height: 90,
+              height: 68,
               flex: "0 1 156px",
               border: "1px solid #D5D5E4",
               padding: 0,
@@ -1295,43 +1280,14 @@ function ProjectRowGallery({ images, title }) {
               overflow: "hidden",
             }}
           >
-            {img.image ? (
-              <img
-                src={img.image}
-                alt={img.caption || title}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                  objectPosition: "center",
-                  display: "block",
-                }}
-              />
-            ) : (
-              <Plus size={18} strokeWidth={1} style={{ color: "#C7C7C2" }} />
-            )}
+            {img.image ? <img src={img.image} alt={img.caption || title}
+              style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }} />
+              : <Plus size={18} strokeWidth={1} style={{ color: "#C7C7C2" }} />}
           </button>
         ))}
         </div>
-
-        <button
-          type="button"
-          onClick={() => setPage((current) => Math.min(pageCount - 1, current + 1))}
-          disabled={page >= pageCount - 1}
-          aria-label="Show more images"
-          style={{
-            gridColumn: 3,
-            width: 32,
-            height: 32,
-            display: page < pageCount - 1 ? "flex" : "none",
-            alignItems: "center",
-            justifyContent: "center",
-            border: 0,
-            background: "transparent",
-            color: "#1A1B4B",
-            cursor: "pointer",
-          }}
-        >
+        <button type="button" onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))} aria-label="Show more images"
+          style={{ gridColumn: 3, width: 32, height: 32, display: page < pageCount - 1 ? "flex" : "none", alignItems: "center", justifyContent: "center", border: 0, background: "transparent", color: "#1A1B4B", cursor: "pointer" }}>
           <ChevronRight size={22} strokeWidth={1.5} />
         </button>
       </div>
@@ -1364,11 +1320,7 @@ function ProjectRowGallery({ images, title }) {
           />
           <div style={{ marginTop: 18, maxWidth: 720, color: "#FFFFFF", textAlign: "center" }}>
             <div style={{ fontSize: 15, letterSpacing: "0.03em" }}>{zoomedImage.caption || title}</div>
-            {zoomedImage.description && (
-              <div style={{ marginTop: 8, fontSize: 12, lineHeight: 1.6, color: "#D9D9E0" }}>
-                {zoomedImage.description}
-              </div>
-            )}
+            {zoomedImage.description && <div style={{ marginTop: 8, fontSize: 12, lineHeight: 1.6, color: "#D9D9E0" }}>{zoomedImage.description}</div>}
           </div>
           <button
             type="button"
@@ -1409,7 +1361,10 @@ function ProjectsList({ projects, selectedId, onSelect, colTemplate, openId, onT
               transition: "background 0.25s ease",
               padding: "9px 10px",
             }}
-            onClick={() => onSelect(p.id)}
+            onClick={() => {
+              onSelect(p.id);
+              onToggleImages(p.id);
+            }}
           >
             <span style={{ fontSize: 11.5 }}>{p.year}</span>
             <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.season}</span>
@@ -1601,7 +1556,10 @@ function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) 
               transition: "background 0.25s ease",
               padding: "10px 10px",
             }}
-            onClick={() => onSelect(s.id)}
+            onClick={() => {
+              onSelect(s.id);
+              onToggleImages(s.id);
+            }}
           >
             <span style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               {s.academic.map((a, i) => (
