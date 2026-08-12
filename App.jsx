@@ -430,13 +430,13 @@ const STUDIES = [
         aspectRatio: "532 / 712",
       },
       {
-        image: "/images/The Ceres Mood Board - Page 1.png",
-        caption: "The Ceres Mood Board - Page 1",
+        image: "/images/Exhibition Space Model for Ceres by Storrs-Explanations.png",
+        caption: "Exhibition Space Model for Ceres by Storrs - Explanations",
         aspectRatio: "1440 / 810",
       },
       {
-        image: "/images/The Ceres Mood Board - Page 2.png",
-        caption: "The Ceres Mood Board - Page 2",
+        image: "/images/Exhibition Space Model for Ceres by Storrs-Mood board.png",
+        caption: "TExhibition Space Model for Ceres by Storrs - Mood board",
         aspectRatio: "1440 / 810",
       }
     ],
