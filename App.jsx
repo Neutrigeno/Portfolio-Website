@@ -690,7 +690,7 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
   );
 }
 
-function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth, verticalGap = 28, topOffset = 0, gridColumn }) {
+function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth, verticalGap = 28, topOffset = 0, gridColumn, independentColumn = false }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
   const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image
@@ -724,7 +724,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
       onClick={() => onOpen(artwork)}
       style={{
         gridColumn: gridColumn || undefined,
-        gridRowEnd: `span ${span}`,
+        gridRowEnd: independentColumn ? undefined : `span ${span}`,
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(18px)",
         transition: "opacity 0.7s ease, transform 0.7s ease",
@@ -2223,6 +2223,36 @@ export default function App() {
                   onOpen={openWork}
                   registerFrame={registerFrame}
                 />
+              ) : filters.layout === 1 ? (
+                <div
+                  ref={galleryRef}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: `repeat(${galleryColumns}, minmax(0, 1fr))`,
+                    columnGap: 28,
+                    alignItems: "start",
+                  }}
+                >
+                  {Array.from({ length: galleryColumns }, (_, columnIndex) => (
+                    <div key={columnIndex} style={{ minWidth: 0 }}>
+                      {sortedArtworks
+                        .filter((_, index) => index % galleryColumns === columnIndex)
+                        .map((a, columnItemIndex) => (
+                          <ArtworkCard
+                            key={a.id}
+                            artwork={a}
+                            showCaption={shouldShowCaption(a)}
+                            onOpen={openWork}
+                            frameRef={registerFrame(a.id)}
+                            columnWidth={columnWidth}
+                            independentColumn
+                            verticalGap={40}
+                            topOffset={columnItemIndex > 0 ? [0, 40, 80, 40][columnIndex] : 0}
+                          />
+                        ))}
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div
                   ref={galleryRef}
@@ -2234,7 +2264,7 @@ export default function App() {
                     rowGap: 0,
                   }}
                 >
-                  {sortedArtworks.map((a, index) => (
+                  {sortedArtworks.map((a) => (
                     <ArtworkCard
                       key={a.id}
                       artwork={a}
@@ -2243,13 +2273,6 @@ export default function App() {
                       frameRef={registerFrame(a.id)}
                       spanScale={filters.layout === 2 ? 2 : 1}
                       columnWidth={columnWidth}
-                      gridColumn={filters.layout === 1 ? (index % galleryColumns) + 1 : undefined}
-                      verticalGap={filters.layout === 1 ? 40 : 28}
-                      topOffset={
-                        filters.layout === 1 && index >= galleryColumns
-                          ? [0, 40, 80, 40][index % galleryColumns]
-                          : 0
-                      }
                     />
                   ))}
                 </div>
