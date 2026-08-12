@@ -690,7 +690,7 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
   );
 }
 
-function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth, verticalGap = 28 }) {
+function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
   const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image
@@ -704,7 +704,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
 
   // Measure the card's NATURAL content height (image at its real aspect ratio +
   // optional caption + bottom spacing), then convert that height to 8px masonry rows.
-  // The visual gap lives inside each card: MULTIPLE uses 64px while TWO keeps 28px.
+  // The gallery itself uses rowGap: 0; the 28px visual gap lives inside each card.
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) return;
@@ -713,7 +713,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
     const obs = new ResizeObserver(update);
     obs.observe(el);
     return () => obs.disconnect();
-  }, [showCaption, naturalRatio, columnWidth, verticalGap]);
+  }, [showCaption, naturalRatio, columnWidth]);
 
   const span = contentHeight
     ? Math.max(1, Math.ceil(contentHeight / 8))
@@ -733,7 +733,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
         alignSelf: "start",
       }}
     >
-      <div ref={contentRef} style={{ paddingBottom: verticalGap, boxSizing: "border-box" }}>
+      <div ref={contentRef} style={{ paddingBottom: 28, boxSizing: "border-box" }}>
         <div
           ref={frameRef}
           onMouseEnter={() => setHover(true)}
@@ -1213,27 +1213,12 @@ function AboutBody({ lang, t, sections }) {
 
 function ProjectRowGallery({ images, title }) {
   const [zoomedImage, setZoomedImage] = useState(null);
-  const [isDocked, setIsDocked] = useState(false);
-  const originalGalleryRef = useRef(null);
-  const centerIndex = Math.floor(images.length / 2);
+  const [page, setPage] = useState(0);
+  const pageSize = 5;
+  const pageCount = Math.max(1, Math.ceil(images.length / pageSize));
+  const visibleImages = images.slice(page * pageSize, page * pageSize + pageSize);
 
-  useEffect(() => {
-    const gallery = originalGalleryRef.current;
-    const scrollRegion = gallery?.closest("[data-scroll-region]");
-    if (!gallery || !scrollRegion) return;
-    const updateDockedState = () => {
-      const galleryRect = gallery.getBoundingClientRect();
-      const scrollRect = scrollRegion.getBoundingClientRect();
-      setIsDocked(galleryRect.bottom <= scrollRect.top + 1);
-    };
-    updateDockedState();
-    scrollRegion.addEventListener("scroll", updateDockedState, { passive: true });
-    window.addEventListener("resize", updateDockedState);
-    return () => {
-      scrollRegion.removeEventListener("scroll", updateDockedState);
-      window.removeEventListener("resize", updateDockedState);
-    };
-  }, [images]);
+  useEffect(() => setPage(0), [images]);
 
   useEffect(() => {
     if (!zoomedImage) return;
@@ -1245,96 +1230,111 @@ function ProjectRowGallery({ images, title }) {
   return (
     <>
       <div
-        ref={originalGalleryRef}
         style={{
           width: "calc(100% + 88px)",
           marginLeft: -44,
+          height: 136,
           boxSizing: "border-box",
-          padding: "38px 44px 42px",
+          padding: "18px 44px",
           borderTop: "1px solid #E2E2ED",
           borderBottom: "1px solid #E2E2ED",
           animation: "rowExpand 0.35s ease",
+          display: "grid",
+          gridTemplateColumns: "36px minmax(0, 1fr) 36px",
+          alignItems: "center",
         }}
       >
+        <button
+          type="button"
+          onClick={() => setPage((current) => Math.max(0, current - 1))}
+          disabled={page === 0}
+          aria-label="Show previous images"
+          style={{
+            width: 32,
+            height: 32,
+            display: page > 0 ? "flex" : "none",
+            alignItems: "center",
+            justifyContent: "center",
+            border: 0,
+            background: "transparent",
+            color: "#1A1B4B",
+            cursor: "pointer",
+          }}
+        >
+          <ChevronLeft size={22} strokeWidth={1.5} />
+        </button>
+
         <div
           className="project-image-gallery"
           style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${Math.min(Math.max(images.length, 1), 5)}, minmax(0, 1fr))`,
-            gap: "clamp(20px, 3vw, 56px)",
+            gridColumn: 2,
+            display: "flex",
+            justifyContent: "center",
             alignItems: "center",
+            gap: "clamp(20px, 4vw, 64px)",
+            minWidth: 0,
           }}
         >
-        {images.map((img, i) => (
+        {visibleImages.map((img, i) => (
           <button
-            key={i}
+            key={`${page}-${i}`}
             className="project-gallery-item"
             type="button"
             onClick={() => setZoomedImage(img)}
-            aria-label={`Open ${img.caption || title || `image ${i + 1}`}`}
+            aria-label={`Open ${img.caption || title || `image ${page * pageSize + i + 1}`}`}
+            title={img.caption || title}
             style={{
               appearance: "none",
-              border: 0,
+              width: "clamp(104px, 10vw, 156px)",
+              height: 90,
+              flex: "0 1 156px",
+              border: "1px solid #D5D5E4",
               padding: 0,
-              background: "transparent",
-              textAlign: "left",
+              background: "#FAFAF8",
               cursor: "zoom-in",
-              transform: i === centerIndex ? "scale(1.22)" : "scale(0.88)",
-              transformOrigin: "center",
-              transition: "transform 0.25s ease",
-              position: "relative",
-              zIndex: i === centerIndex ? 2 : 1,
+              overflow: "hidden",
             }}
           >
-            <ImageFrame src={img.image} alt={img.caption || title} aspectRatio={img.aspectRatio || "4 / 3"} />
-            {img.caption && (
-              <div style={{ marginTop: 8, fontSize: 11, color: "#9A9A94", fontFamily: "'Work Sans', sans-serif" }}>
-                {img.caption}
-              </div>
+            {img.image ? (
+              <img
+                src={img.image}
+                alt={img.caption || title}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  objectPosition: "center",
+                  display: "block",
+                }}
+              />
+            ) : (
+              <Plus size={18} strokeWidth={1} style={{ color: "#C7C7C2" }} />
             )}
           </button>
         ))}
         </div>
-      </div>
 
-      {isDocked && (
-        <div
-          className="docked-project-gallery"
-          aria-label={`${title || "Selected item"} image gallery`}
+        <button
+          type="button"
+          onClick={() => setPage((current) => Math.min(pageCount - 1, current + 1))}
+          disabled={page >= pageCount - 1}
+          aria-label="Show more images"
           style={{
-            position: "fixed", top: 0, left: 168, right: 0, height: 104, maxHeight: 104, zIndex: 4,
-            boxSizing: "border-box", padding: "8px 44px", overflow: "hidden", background: "rgba(255,255,255,0.96)",
-            borderBottom: "1px solid #E2E2ED", display: "grid",
-            gridTemplateColumns: `repeat(${Math.min(Math.max(images.length, 1), 7)}, minmax(0, 1fr))`,
-            gap: "clamp(18px, 3vw, 52px)", alignItems: "center",
-            animation: "dockGallery 0.28s ease", backdropFilter: "blur(8px)",
+            gridColumn: 3,
+            width: 32,
+            height: 32,
+            display: page < pageCount - 1 ? "flex" : "none",
+            alignItems: "center",
+            justifyContent: "center",
+            border: 0,
+            background: "transparent",
+            color: "#1A1B4B",
+            cursor: "pointer",
           }}
         >
-          {images.map((img, i) => (
-            <button
-              key={i} type="button" onClick={() => setZoomedImage(img)}
-              aria-label={`Open ${img.caption || title || `image ${i + 1}`}`} title={img.caption || title}
-              style={{
-                width: "100%", maxWidth: i === centerIndex ? 132 : 112,
-                height: i === centerIndex ? 66 : 50, minWidth: 0, padding: 0,
-                justifySelf: "center",
-                border: "1px solid #D5D5E4", background: "#FAFAF8", cursor: "zoom-in",
-                overflow: "hidden", transition: "height 0.25s ease, max-width 0.25s ease, border-color 0.25s ease",
-              }}
-            >
-              {img.image ? (
-                <img
-                  src={img.image}
-                  alt={img.caption || title}
-                  style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }}
-                />
-              ) : (
-                <Plus size={16} strokeWidth={1} style={{ color: "#C7C7C2" }} />
-              )}
-            </button>
-          ))}
-        </div>
-      )}
+          <ChevronRight size={22} strokeWidth={1.5} />
+        </button>
+      </div>
 
       {zoomedImage && (
         <div
@@ -1362,8 +1362,13 @@ function ProjectRowGallery({ images, title }) {
             onClick={(event) => event.stopPropagation()}
             style={{ maxWidth: "92vw", maxHeight: "78vh", objectFit: "contain", display: "block" }}
           />
-          <div style={{ marginTop: 18, color: "#FFFFFF", fontSize: 14, letterSpacing: "0.03em", textAlign: "center" }}>
-            {zoomedImage.caption || title}
+          <div style={{ marginTop: 18, maxWidth: 720, color: "#FFFFFF", textAlign: "center" }}>
+            <div style={{ fontSize: 15, letterSpacing: "0.03em" }}>{zoomedImage.caption || title}</div>
+            {zoomedImage.description && (
+              <div style={{ marginTop: 8, fontSize: 12, lineHeight: 1.6, color: "#D9D9E0" }}>
+                {zoomedImage.description}
+              </div>
+            )}
           </div>
           <button
             type="button"
@@ -1873,10 +1878,6 @@ export default function App() {
           from { opacity: 0; transform: translateY(-6px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes dockGallery {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
         @media (max-width: 760px) {
           .project-image-gallery {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -2167,7 +2168,7 @@ export default function App() {
           </div>
 
           {/* Body — the only region that scrolls. Content depends on the active section. */}
-          <div data-scroll-region style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
+          <div style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
             {currentSection === "works" &&
               (selectedWork ? (
                 <WorkDetail artwork={selectedWork} lang={lang} firstImageRef={detailFirstImageRef} />
@@ -2198,7 +2199,6 @@ export default function App() {
                       frameRef={registerFrame(a.id)}
                       spanScale={filters.layout === 2 ? 2 : 1}
                       columnWidth={columnWidth}
-                      verticalGap={filters.layout === 1 ? 64 : 28}
                     />
                   ))}
                 </div>
