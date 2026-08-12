@@ -2247,7 +2247,7 @@ export default function App() {
                       verticalGap={filters.layout === 1 ? 40 : 28}
                       topOffset={
                         filters.layout === 1 && index >= galleryColumns
-                          ? [0, 20, 40, 60][index % galleryColumns]
+                          ? [0, 40, 80, 40][index % galleryColumns]
                           : 0
                       }
                     />
