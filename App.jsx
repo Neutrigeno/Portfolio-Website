@@ -186,7 +186,7 @@ const PROJECTS = [
         aspectRatio: "1179 / 1526",
       },
       {
-        image: "/images/Brochure-Front.png",
+        image: "/images/After Line, Before Form Brochure Front.png",
         caption: "After Line, Before Form Brochure Front",
         aspectRatio: "2448 / 1584",
       },
@@ -332,6 +332,9 @@ const STUDIES = [
   {
     id: ++studyAutoId,
     academic: ["East Asian Art History & Culture"], area: "20th Century Korean Art",
+    images: [
+      { image: "https://picsum.photos/seed/study1/700/500", caption: "Field research, Seoul, 2024." },
+      { image: "https://picsum.photos/seed/study2/700/500", caption: "Archive materials reviewed for this study." },
     ],
     researchQuestion: "", terminology: "", scopeOfArea: "", methodology: "",
     researchSignificance: "", keyWords: "", references: "",
@@ -687,7 +690,7 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
   );
 }
 
-function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth }) {
+function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth, verticalGap = 28, topOffset = 0, gridColumn }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
   const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image
@@ -700,8 +703,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
   };
 
   // Measure the card's NATURAL content height (image at its real aspect ratio +
-  // optional caption + bottom spacing), then convert that height to 8px masonry rows.
-  // The gallery itself uses rowGap: 0; the 28px visual gap lives inside each card.
+  // optional caption + stagger/gap spacing), then convert that height to 8px masonry rows.
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) return;
@@ -710,7 +712,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
     const obs = new ResizeObserver(update);
     obs.observe(el);
     return () => obs.disconnect();
-  }, [showCaption, naturalRatio, columnWidth]);
+  }, [showCaption, naturalRatio, columnWidth, verticalGap, topOffset]);
 
   const span = contentHeight
     ? Math.max(1, Math.ceil(contentHeight / 8))
@@ -721,6 +723,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
       ref={ref}
       onClick={() => onOpen(artwork)}
       style={{
+        gridColumn: gridColumn || undefined,
         gridRowEnd: `span ${span}`,
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(18px)",
@@ -730,7 +733,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
         alignSelf: "start",
       }}
     >
-      <div ref={contentRef} style={{ paddingBottom: 28, boxSizing: "border-box" }}>
+      <div ref={contentRef} style={{ paddingTop: topOffset, paddingBottom: verticalGap, boxSizing: "border-box" }}>
         <div
           ref={frameRef}
           onMouseEnter={() => setHover(true)}
@@ -1683,8 +1686,8 @@ function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) 
 }
 
 function StudiesBody({ lang, t }) {
-  const [selectedId, setSelectedId] = useState(STUDIES[1].id); // default to the row highlighted in the wireframe
-  const [openId, setOpenId] = useState(STUDIES[1].id);
+  const [selectedId, setSelectedId] = useState(STUDIES[2].id); // Korean Architectures is the default study
+  const [openId, setOpenId] = useState(STUDIES[2].id);
   const study = STUDIES.find((s) => s.id === selectedId);
   const galleryStudy = STUDIES.find((s) => s.id === openId) || study;
 
@@ -2231,7 +2234,7 @@ export default function App() {
                     rowGap: 0,
                   }}
                 >
-                  {sortedArtworks.map((a) => (
+                  {sortedArtworks.map((a, index) => (
                     <ArtworkCard
                       key={a.id}
                       artwork={a}
@@ -2240,6 +2243,13 @@ export default function App() {
                       frameRef={registerFrame(a.id)}
                       spanScale={filters.layout === 2 ? 2 : 1}
                       columnWidth={columnWidth}
+                      gridColumn={filters.layout === 1 ? (index % galleryColumns) + 1 : undefined}
+                      verticalGap={filters.layout === 1 ? 72 : 28}
+                      topOffset={
+                        filters.layout === 1 && index >= galleryColumns
+                          ? [24, 64, 104, 144][index % galleryColumns]
+                          : 0
+                      }
                     />
                   ))}
                 </div>
