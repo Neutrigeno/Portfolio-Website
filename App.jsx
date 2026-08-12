@@ -1233,7 +1233,7 @@ function ProjectRowGallery({ images, title }) {
         style={{
           width: "calc(100% + 88px)",
           marginLeft: -44,
-          marginTop: 18,
+          marginTop: 32,
           height: 104,
           boxSizing: "border-box",
           padding: "12px 44px",
@@ -1270,18 +1270,21 @@ function ProjectRowGallery({ images, title }) {
             title={img.caption || title}
             style={{
               appearance: "none",
-              width: "clamp(104px, 10vw, 156px)",
-              height: 68,
-              flex: "0 1 156px",
-              border: "1px solid #D5D5E4",
+              maxWidth: 156,
+              maxHeight: 68,
+              flex: "0 1 auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "2px solid #1A1B4B",
               padding: 0,
-              background: "#FAFAF8",
+              background: "transparent",
               cursor: "zoom-in",
               overflow: "hidden",
             }}
           >
             {img.image ? <img src={img.image} alt={img.caption || title}
-              style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }} />
+              style={{ width: "auto", height: "auto", maxWidth: 152, maxHeight: 64, objectFit: "contain", display: "block" }} />
               : <Plus size={18} strokeWidth={1} style={{ color: "#C7C7C2" }} />}
           </button>
         ))}
@@ -1517,13 +1520,13 @@ function ProjectsBody({ lang, t }) {
   const [selectedId, setSelectedId] = useState(PROJECTS[2].id); // default to the fully-populated example row
   const [openId, setOpenId] = useState(PROJECTS[2].id);
   const project = PROJECTS.find((p) => p.id === selectedId);
-  const galleryProject = PROJECTS.find((p) => p.id === openId);
+  const galleryProject = PROJECTS.find((p) => p.id === openId) || project;
   const colTemplate = "56px 74px 110px 1.4fr 160px 1.6fr 28px";
 
   return (
     <div>
       <ProjectsList projects={PROJECTS} selectedId={selectedId} onSelect={setSelectedId} colTemplate={colTemplate} openId={openId} onToggleImages={setOpenId} />
-      {galleryProject?.images?.length > 0 && <ProjectRowGallery images={galleryProject.images} title={galleryProject.title} />}
+      {galleryProject && <ProjectRowGallery images={galleryProject.images || []} title={galleryProject.title} />}
       <div style={{ paddingTop: 34 }}>
         <FieldAccordion item={project} fieldDefs={FIELD_DEFS} t={t} emptyMessage={t.selectProject} />
       </div>
@@ -1603,12 +1606,12 @@ function StudiesBody({ lang, t }) {
   const [selectedId, setSelectedId] = useState(STUDIES[1].id); // default to the row highlighted in the wireframe
   const [openId, setOpenId] = useState(STUDIES[1].id);
   const study = STUDIES.find((s) => s.id === selectedId);
-  const galleryStudy = STUDIES.find((s) => s.id === openId);
+  const galleryStudy = STUDIES.find((s) => s.id === openId) || study;
 
   return (
     <div>
       <StudiesList studies={STUDIES} selectedId={selectedId} onSelect={setSelectedId} openId={openId} onToggleImages={setOpenId} />
-      {galleryStudy?.images?.length > 0 && <ProjectRowGallery images={galleryStudy.images} title={galleryStudy.area} />}
+      {galleryStudy && <ProjectRowGallery images={galleryStudy.images || []} title={galleryStudy.area} />}
       <div style={{ paddingTop: 34 }}>
         <FieldAccordion item={study} fieldDefs={STUDY_FIELD_DEFS} t={t} emptyMessage={t.selectStudy} />
       </div>
