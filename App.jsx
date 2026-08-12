@@ -690,7 +690,7 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
   );
 }
 
-function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth }) {
+function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth, verticalGap = 28 }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
   const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image
@@ -704,7 +704,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
 
   // Measure the card's NATURAL content height (image at its real aspect ratio +
   // optional caption + bottom spacing), then convert that height to 8px masonry rows.
-  // The gallery itself uses rowGap: 0; the 28px visual gap lives inside each card.
+  // The visual gap lives inside each card: MULTIPLE uses 64px while TWO keeps 28px.
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) return;
@@ -713,7 +713,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
     const obs = new ResizeObserver(update);
     obs.observe(el);
     return () => obs.disconnect();
-  }, [showCaption, naturalRatio, columnWidth]);
+  }, [showCaption, naturalRatio, columnWidth, verticalGap]);
 
   const span = contentHeight
     ? Math.max(1, Math.ceil(contentHeight / 8))
@@ -733,7 +733,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
         alignSelf: "start",
       }}
     >
-      <div ref={contentRef} style={{ paddingBottom: 28, boxSizing: "border-box" }}>
+      <div ref={contentRef} style={{ paddingBottom: verticalGap, boxSizing: "border-box" }}>
         <div
           ref={frameRef}
           onMouseEnter={() => setHover(true)}
@@ -1221,13 +1221,11 @@ function ProjectRowGallery({ images, title }) {
     const gallery = originalGalleryRef.current;
     const scrollRegion = gallery?.closest("[data-scroll-region]");
     if (!gallery || !scrollRegion) return;
-
     const updateDockedState = () => {
       const galleryRect = gallery.getBoundingClientRect();
       const scrollRect = scrollRegion.getBoundingClientRect();
       setIsDocked(galleryRect.bottom <= scrollRect.top + 1);
     };
-
     updateDockedState();
     scrollRegion.addEventListener("scroll", updateDockedState, { passive: true });
     window.addEventListener("resize", updateDockedState);
@@ -1304,47 +1302,31 @@ function ProjectRowGallery({ images, title }) {
           className="docked-project-gallery"
           aria-label={`${title || "Selected item"} image gallery`}
           style={{
-            position: "fixed",
-            top: 0,
-            left: 168,
-            right: 0,
-            height: 104,
-            zIndex: 4,
-            boxSizing: "border-box",
-            padding: "10px 44px",
-            background: "rgba(255,255,255,0.96)",
-            borderBottom: "1px solid #E2E2ED",
-            display: "grid",
+            position: "fixed", top: 0, left: 168, right: 0, height: 104, maxHeight: 104, zIndex: 4,
+            boxSizing: "border-box", padding: "8px 44px", overflow: "hidden", background: "rgba(255,255,255,0.96)",
+            borderBottom: "1px solid #E2E2ED", display: "grid",
             gridTemplateColumns: `repeat(${Math.min(Math.max(images.length, 1), 7)}, minmax(0, 1fr))`,
-            gap: "clamp(18px, 3vw, 52px)",
-            alignItems: "center",
-            animation: "dockGallery 0.28s ease",
-            backdropFilter: "blur(8px)",
+            gap: "clamp(18px, 3vw, 52px)", alignItems: "center",
+            animation: "dockGallery 0.28s ease", backdropFilter: "blur(8px)",
           }}
         >
           {images.map((img, i) => (
             <button
-              key={i}
-              type="button"
-              onClick={() => setZoomedImage(img)}
-              aria-label={`Open ${img.caption || title || `image ${i + 1}`}`}
-              title={img.caption || title}
+              key={i} type="button" onClick={() => setZoomedImage(img)}
+              aria-label={`Open ${img.caption || title || `image ${i + 1}`}`} title={img.caption || title}
               style={{
-                height: i === centerIndex ? 82 : 64,
-                minWidth: 0,
-                padding: 0,
-                border: "1px solid #D5D5E4",
-                background: "#FAFAF8",
-                cursor: "zoom-in",
-                overflow: "hidden",
-                transition: "height 0.25s ease, border-color 0.25s ease",
+                width: "100%", maxWidth: i === centerIndex ? 132 : 112,
+                height: i === centerIndex ? 66 : 50, minWidth: 0, padding: 0,
+                justifySelf: "center",
+                border: "1px solid #D5D5E4", background: "#FAFAF8", cursor: "zoom-in",
+                overflow: "hidden", transition: "height 0.25s ease, max-width 0.25s ease, border-color 0.25s ease",
               }}
             >
               {img.image ? (
                 <img
                   src={img.image}
                   alt={img.caption || title}
-                  style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                  style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }}
                 />
               ) : (
                 <Plus size={16} strokeWidth={1} style={{ color: "#C7C7C2" }} />
@@ -2216,6 +2198,7 @@ export default function App() {
                       frameRef={registerFrame(a.id)}
                       spanScale={filters.layout === 2 ? 2 : 1}
                       columnWidth={columnWidth}
+                      verticalGap={filters.layout === 1 ? 64 : 28}
                     />
                   ))}
                 </div>
