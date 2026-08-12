@@ -186,7 +186,7 @@ const PROJECTS = [
         aspectRatio: "1179 / 1526",
       },
       {
-        image: "/images/After Line, Before Form Brochure Front.png",
+        image: "/Brochure-Front.png",
         caption: "After Line, Before Form Brochure Front",
         aspectRatio: "2448 / 1584",
       },
