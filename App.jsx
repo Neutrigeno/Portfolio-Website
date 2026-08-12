@@ -1759,7 +1759,7 @@ function FilterPills({ options, selected, onSelect, multi }) {
 export default function App() {
   const [lang, setLang] = useState("en");
   const [selectedNav, setSelectedNav] = useState(0); // index into navKeys
-  const [selectedMediums, setSelectedMediums] = useState([0]); // multi-select, at least 1 required
+  const [selectedMediums, setSelectedMediums] = useState([0, 1]); // Painting and Sculpture selected by default
   const [filters, setFilters] = useState({ media: 1, layout: 1, order: 1 });
   const [selectedWork, setSelectedWork] = useState(null); // artwork object when a works-detail page is open
   const [aboutSections, setAboutSections] = useState({ description: true, bio: false, contact: false });
@@ -2244,10 +2244,10 @@ export default function App() {
                       spanScale={filters.layout === 2 ? 2 : 1}
                       columnWidth={columnWidth}
                       gridColumn={filters.layout === 1 ? (index % galleryColumns) + 1 : undefined}
-                      verticalGap={filters.layout === 1 ? 80 : 28}
+                      verticalGap={filters.layout === 1 ? 48 : 28}
                       topOffset={
                         filters.layout === 1 && index >= galleryColumns
-                          ? [0, 40, 80, 120][index % galleryColumns]
+                          ? [0, 20, 40, 60][index % galleryColumns]
                           : 0
                       }
                     />
