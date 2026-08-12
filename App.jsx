@@ -186,7 +186,7 @@ const PROJECTS = [
         aspectRatio: "1179 / 1526",
       },
       {
-        image: "/images/Brochure-Front.png",
+        image: "/images/After Line, Before Form Brochure Front.png",
         caption: "After Line, Before Form Brochure Front",
         aspectRatio: "2448 / 1584",
       },
@@ -332,10 +332,7 @@ const STUDIES = [
   {
     id: ++studyAutoId,
     academic: ["East Asian Art History & Culture"], area: "20th Century Korean Art",
-    images: [
-      { image:},
-      { image:},
-    ],
+    images: [],
     researchQuestion: "", terminology: "", scopeOfArea: "", methodology: "",
     researchSignificance: "", keyWords: "", references: "",
   },
@@ -1270,6 +1267,21 @@ function ProjectRowGallery({ images, title }) {
     const current = images.indexOf(zoomedImage);
     setZoomedImage(images[(current + 1) % images.length]);
   };
+
+  if (images.length === 0) {
+    return (
+      <div
+        aria-hidden="true"
+        style={{
+          width: "calc(100% + 88px)",
+          marginLeft: -44,
+          marginTop: 32,
+          height: 1,
+          background: "#E2E2ED",
+        }}
+      />
+    );
+  }
 
   return (
     <>
