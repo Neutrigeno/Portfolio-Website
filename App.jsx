@@ -180,16 +180,8 @@ const PROJECTS = [
     org: "UKRAINIAN INSTITUTE OF MODERN ART", location: "CHICAGO, IL US",
     title: "AFTER LINE, BEFORE FORM",
     images: [
-      {
-        image: "/images/After Line, Before Form Poster.jpg",
-        caption: "After Line, Before Form Poster",
-        aspectRatio: "1179 / 1526",
-      },
-      {
-        image: "/images/After Line, Before Form Brochure Front.png",
-        caption: "After Line, Before Form Brochure Front",
-        aspectRatio: "2448 / 1584",
-      },
+      { image: "https://picsum.photos/seed/uima1/700/500", caption: "Installation view, Ukrainian Institute of Modern Art." },
+      { image: "https://picsum.photos/seed/uima2/700/500", caption: "Detail, opening reception." },
     ],
     purpose: "• To present artworks by artists from Ukrainian and international backgrounds cohesively and deliver an understanding of connections within the exhibition to audiences.\n• Learn about the impact that the notion of nationality attached to an artist has on the contemporary art world and what premises it brings to curatorial research and the decision-making process.\n• To learn about the collaborative process, unexpected things that happen, and how to reconcile opinions while creating the best outcome.\n• To learn about museum work through a museum setting.",
     role: ["Student Curator", "Interpretive Designer"],
@@ -214,18 +206,7 @@ const PROJECTS = [
     year: 2024, season: "SUMMER", type: "INTERPRETATION",
     org: "KOREA MINISTRY OF UNIFICATION", location: "GOSEONG, GANGWON KR",
     title: "KOREA NORTH & SOUTH UNION PROGRAM",
-    images: [
-      {
-        image: "/images/Location of Goseong County in Korea.png",
-        caption: "Location of Goseong County in Korea",
-        aspectRatio: "1132 / 1452",
-      },
-      {
-        image: "/images/Museums and historical sites visited in Goseong.png",
-        caption: "Museums and historical sites visited in Goseong",
-        aspectRatio: "1116 / 1428",
-      },
-    ],
+    images: [],
     purpose: "To learn about the perspectives of foreigners and scholars on the history and ongoing interactions between South and North Korea.",
     role: ["Simultaneous Interpreter", "Group Assistant"],
     team: "",
@@ -341,58 +322,7 @@ const STUDIES = [
   },
   {
     id: ++studyAutoId,
-    academic: ["East Asian Art History & Culture"], area: "Korean Architectures from Joseon Period to Contemporary", images: [
-      {
-        image: "/images/Figure 1, Figure 2.png",
-        caption: "Figure 1, Figure 2",
-        aspectRatio: "1094 / 418",
-      },
-      {
-        image: "/images/Figure 3, Figure 4.png",
-        caption: "Figure 3, Figure 4",
-        aspectRatio: "1080 / 436",
-      },
-      {
-        image: "/images/Figure 6, Figure 7.png",
-        caption: "Figure 6, Figure 7",
-        aspectRatio: "1082 / 740",
-      },
-      {
-        image: "/images/Figure 8, Figure 9.png",
-        caption: "Figure 8, Figure 9",
-        aspectRatio: "1294 / 1110",
-      },
-      {
-        image: "/images/Figure 10, Figure 11.png",
-        caption: "Figure 10, Figure 11",
-        aspectRatio: "1128 / 862",
-      },
-      {
-        image: "/images/Figure 12.png",
-        caption: "Figure 12",
-        aspectRatio: "1106 / 510",
-      },
-      {
-        image: "/images/Figure 13.png",
-        caption: "Figure 13",
-        aspectRatio: "972 / 538",
-      },
-      {
-        image: "/images/Study on Combination of Hanok Wall.png",
-        caption: "Study on Combination of Hanok Wall",
-        aspectRatio: "2048 / 1331",
-      },
-      {
-        image: "/images/Study on Tone of Hanok Architecture, 15x16, MDF, 2025.JPG",
-        caption: "Study on Tone of Hanok Architecture, 15x16, MDF, 2025",
-        aspectRatio: "2048 / 1674",
-      },
-      {
-        image: "/images/Study on Variations of Hanok Wall.png",
-        caption: "Study on Variations of Hanok Wall",
-        aspectRatio: "2048 / 1315",
-      }
-    ],
+    academic: ["East Asian Art History & Culture"], area: "Korean Architectures from Joseon Period to Contemporary", images: [],
     researchQuestion: "How can architectural tradition be understood as a continuously produced historical process rather than a fixed repertoire of inherited forms, and what does contemporary Korean architecture reveal about this distinction?\n\nDefinition — How have scholars and architects defined what counts as \"traditional Korean architecture\"?\nTranslation — How have those definitions been materialized in contemporary architecture?\nTemporality — Must architectural tradition refer backward to fixed historical forms, or can tradition itself continue to accumulate and change?",
     terminology: "Yangok (洋屋), hanok (韓屋), youngjo (營造), geonchug (建築), buildings (chae) and courtyards (madang), International Style, Koreanness",
     scopeOfArea: "• Korean temples and palaces from the Joseon period that currently exist or are documented in descriptive historical records.\n• East Asian architecture built during a similar time period to the Joseon era.\n• Western architecture built during a similar time period to the Joseon era.\n• The periods in which Western architectural terminology originated.",
@@ -403,43 +333,7 @@ const STUDIES = [
   },
   {
     id: ++studyAutoId,
-    academic: ["Museum Administration", "Behavior Science"], area: "Artwork, Institution, and People", images: [
-      {
-        image: "/images/Exhibition Space Model for Ceres by Storrs-Floorplan.png",
-        caption: "Exhibition Space Model for Ceres by Storrs-Floorplan",
-        aspectRatio: "794 / 1120",
-      },
-      {
-        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.1.png",
-        caption: "Exhibition Space Model for Ceres by Storrs-Take.1",
-        aspectRatio: "678 / 780",
-      },
-      {
-        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.2.png",
-        caption: "Exhibition Space Model for Ceres by Storrs-Take.2",
-        aspectRatio: "608 / 778",
-      },
-      {
-        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.3.png",
-        caption: "Exhibition Space Model for Ceres by Storrs-Take.3",
-        aspectRatio: "648 / 778",
-      },
-      {
-        image: "/images/Exhibition Space Model for Ceres by Storrs-Take.4.png",
-        caption: "Exhibition Space Model for Ceres by Storrs-Take.4",
-        aspectRatio: "532 / 712",
-      },
-      {
-        image: "/images/Exhibition Space Model for Ceres by Storrs-Explanations.png",
-        caption: "Exhibition Space Model for Ceres by Storrs - Explanations",
-        aspectRatio: "1440 / 810",
-      },
-      {
-        image: "/images/Exhibition Space Model for Ceres by Storrs-Mood board.png",
-        caption: "TExhibition Space Model for Ceres by Storrs - Mood board",
-        aspectRatio: "1440 / 810",
-      }
-    ],
+    academic: ["Museum Administration", "Behavior Science"], area: "Artwork, Institution, and People", images: [],
     researchQuestion: "How can a comprehensive understanding of museums be developed by bringing together all forms of museum data, including information about visitors, institutions, and artworks?",
     terminology: "",
     scopeOfArea: "Museums and galleries in Chicago, IL, U.S.; Manhattan, NY, U.S.; Seoul, South Korea; and, to a lesser extent, other provinces in South Korea, from 2024–2033.",
@@ -690,7 +584,7 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
   );
 }
 
-function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth, verticalGap = 28, topOffset = 0, gridColumn }) {
+function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
   const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image
@@ -703,7 +597,8 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
   };
 
   // Measure the card's NATURAL content height (image at its real aspect ratio +
-  // optional caption + stagger/gap spacing), then convert that height to 8px masonry rows.
+  // optional caption + bottom spacing), then convert that height to 8px masonry rows.
+  // The gallery itself uses rowGap: 0; the 28px visual gap lives inside each card.
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) return;
@@ -712,7 +607,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
     const obs = new ResizeObserver(update);
     obs.observe(el);
     return () => obs.disconnect();
-  }, [showCaption, naturalRatio, columnWidth, verticalGap, topOffset]);
+  }, [showCaption, naturalRatio, columnWidth]);
 
   const span = contentHeight
     ? Math.max(1, Math.ceil(contentHeight / 8))
@@ -723,7 +618,6 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
       ref={ref}
       onClick={() => onOpen(artwork)}
       style={{
-        gridColumn: gridColumn || undefined,
         gridRowEnd: `span ${span}`,
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(18px)",
@@ -733,7 +627,7 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
         alignSelf: "start",
       }}
     >
-      <div ref={contentRef} style={{ paddingTop: topOffset, paddingBottom: verticalGap, boxSizing: "border-box" }}>
+      <div ref={contentRef} style={{ paddingBottom: 28, boxSizing: "border-box" }}>
         <div
           ref={frameRef}
           onMouseEnter={() => setHover(true)}
@@ -1211,229 +1105,43 @@ function AboutBody({ lang, t, sections }) {
   );
 }
 
-function ProjectRowGallery({ images, title }) {
-  const [zoomedImage, setZoomedImage] = useState(null);
-  const [page, setPage] = useState(0);
-  const [isDocked, setIsDocked] = useState(false);
-  const galleryAnchorRef = useRef(null);
-  const pageSize = 5;
-  const pageCount = Math.max(1, Math.ceil(images.length / pageSize));
-  const visibleImages = images.slice(page * pageSize, page * pageSize + pageSize);
-
-  useEffect(() => setPage(0), [images]);
-
-  useEffect(() => {
-    const anchor = galleryAnchorRef.current;
-    const scrollRegion = anchor?.closest("[data-scroll-region]");
-    if (!anchor || !scrollRegion) return;
-
-    const updateDockedState = () => {
-      const anchorRect = anchor.getBoundingClientRect();
-      const scrollRect = scrollRegion.getBoundingClientRect();
-      setIsDocked(anchorRect.bottom <= scrollRect.top + 1);
-    };
-
-    updateDockedState();
-    scrollRegion.addEventListener("scroll", updateDockedState, { passive: true });
-    window.addEventListener("resize", updateDockedState);
-    return () => {
-      scrollRegion.removeEventListener("scroll", updateDockedState);
-      window.removeEventListener("resize", updateDockedState);
-    };
-  }, [images]);
-
-  useEffect(() => {
-    if (!zoomedImage) return;
-    const handleLightboxKey = (event) => {
-      if (event.key === "Escape") setZoomedImage(null);
-      if (event.key === "ArrowLeft" && images.length > 1) {
-        const current = images.indexOf(zoomedImage);
-        setZoomedImage(images[(current - 1 + images.length) % images.length]);
-      }
-      if (event.key === "ArrowRight" && images.length > 1) {
-        const current = images.indexOf(zoomedImage);
-        setZoomedImage(images[(current + 1) % images.length]);
-      }
-    };
-    window.addEventListener("keydown", handleLightboxKey);
-    return () => window.removeEventListener("keydown", handleLightboxKey);
-  }, [zoomedImage, images]);
-
-  const showPreviousZoomedImage = (event) => {
-    event.stopPropagation();
-    const current = images.indexOf(zoomedImage);
-    setZoomedImage(images[(current - 1 + images.length) % images.length]);
-  };
-
-  const showNextZoomedImage = (event) => {
-    event.stopPropagation();
-    const current = images.indexOf(zoomedImage);
-    setZoomedImage(images[(current + 1) % images.length]);
-  };
-
+function ProjectRowGallery({ images }) {
   return (
-    <>
-      <div
-        ref={galleryAnchorRef}
-        style={{ width: "calc(100% + 88px)", marginLeft: -44, marginTop: 32, height: 104 }}
-      >
-        <div
-          style={{
-          width: isDocked ? "auto" : "100%",
-          height: 104,
-          boxSizing: "border-box",
-          padding: "12px 44px",
-          borderTop: "1px solid #E2E2ED",
-          borderBottom: "1px solid #E2E2ED",
-          background: "rgba(255,255,255,0.97)",
-          animation: "rowExpand 0.35s ease",
-          display: "grid",
-          gridTemplateColumns: "36px minmax(0, 1fr) 36px",
-          alignItems: "center",
-          ...(isDocked
-            ? { position: "fixed", top: 0, left: 168, right: 0, zIndex: 20, backdropFilter: "blur(8px)" }
-            : { position: "relative" }),
-        }}
-      >
-        <button type="button" onClick={() => setPage((p) => Math.max(0, p - 1))} aria-label="Show previous images"
-          style={{ width: 32, height: 32, display: page > 0 ? "flex" : "none", alignItems: "center", justifyContent: "center", border: 0, background: "transparent", color: "#1A1B4B", cursor: "pointer" }}>
-          <ChevronLeft size={22} strokeWidth={1.5} />
-        </button>
-        <div
-          className="project-image-gallery"
-          style={{
-            gridColumn: 2,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "clamp(20px, 4vw, 64px)",
-            minWidth: 0,
-          }}
-        >
-        {visibleImages.map((img, i) => (
-          <button
-            key={`${page}-${i}`}
-            className="project-gallery-item"
-            type="button"
-            onClick={() => setZoomedImage(img)}
-            aria-label={`Open ${img.caption || title || `image ${page * pageSize + i + 1}`}`}
-            title={img.caption || title}
-            style={{
-              appearance: "none",
-              maxWidth: 156,
-              maxHeight: 68,
-              flex: "0 1 auto",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "2px solid #1A1B4B",
-              padding: 0,
-              background: "transparent",
-              cursor: "zoom-in",
-              overflow: "hidden",
-            }}
-          >
-            {img.image ? <img src={img.image} alt={img.caption || title}
-              style={{ width: "auto", height: "auto", maxWidth: 152, maxHeight: 64, objectFit: "contain", display: "block" }} />
-              : <Plus size={18} strokeWidth={1} style={{ color: "#C7C7C2" }} />}
-          </button>
-        ))}
-        </div>
-        <button type="button" onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))} aria-label="Show more images"
-          style={{ gridColumn: 3, width: 32, height: 32, display: page < pageCount - 1 ? "flex" : "none", alignItems: "center", justifyContent: "center", border: 0, background: "transparent", color: "#1A1B4B", cursor: "pointer" }}>
-          <ChevronRight size={22} strokeWidth={1.5} />
-        </button>
-        </div>
-      </div>
-
-      {zoomedImage && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={zoomedImage.caption || title || "Image preview"}
-          onClick={() => setZoomedImage(null)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 1000,
-            background: "rgba(18, 18, 28, 0.9)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 32,
-            boxSizing: "border-box",
-            cursor: "zoom-out",
-          }}
-        >
-          {images.length > 1 && (
-            <button
-              type="button"
-              onClick={showPreviousZoomedImage}
-              aria-label="Previous enlarged image"
-              style={{
-                position: "absolute", left: "clamp(18px, 4vw, 72px)", top: "50%",
-                transform: "translateY(-50%)", width: 50, height: 50, borderRadius: "50%",
-                border: "1px solid rgba(255,255,255,0.75)", background: "rgba(18,18,28,0.35)",
-                color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", zIndex: 2,
-              }}
-            >
-              <ChevronLeft size={28} strokeWidth={1.5} />
-            </button>
-          )}
-          <img
-            src={zoomedImage.image}
-            alt={zoomedImage.caption || title}
-            onClick={(event) => event.stopPropagation()}
-            style={{ maxWidth: "92vw", maxHeight: "78vh", objectFit: "contain", display: "block" }}
-          />
-          {images.length > 1 && (
-            <button
-              type="button"
-              onClick={showNextZoomedImage}
-              aria-label="Next enlarged image"
-              style={{
-                position: "absolute", right: "clamp(18px, 4vw, 72px)", top: "50%",
-                transform: "translateY(-50%)", width: 50, height: 50, borderRadius: "50%",
-                border: "1px solid rgba(255,255,255,0.75)", background: "rgba(18,18,28,0.35)",
-                color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", zIndex: 2,
-              }}
-            >
-              <ChevronRight size={28} strokeWidth={1.5} />
-            </button>
-          )}
-          <div style={{ marginTop: 18, maxWidth: 720, color: "#FFFFFF", textAlign: "center" }}>
-            <div style={{ fontSize: 15, letterSpacing: "0.03em" }}>{zoomedImage.caption || title}</div>
-            {zoomedImage.description && <div style={{ marginTop: 8, fontSize: 12, lineHeight: 1.6, color: "#D9D9E0" }}>{zoomedImage.description}</div>}
+    <div
+      style={{
+        gridColumn: "1 / -1",
+        padding: "18px 0 22px 0",
+        animation: "rowExpand 0.35s ease",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 360 }}>
+        {images.map((img, i) => (
+          <div key={i}>
+            <ImageFrame src={img.image} alt={img.caption} aspectRatio="4 / 3" />
+            {img.caption && (
+              <div style={{ marginTop: 8, fontSize: 11, fontStyle: "italic", color: "#9A9A94", fontFamily: "'Work Sans', sans-serif" }}>
+                {img.caption}
+              </div>
+            )}
           </div>
-          <button
-            type="button"
-            onClick={() => setZoomedImage(null)}
-            aria-label="Close image preview"
-            style={{ position: "absolute", top: 22, right: 26, border: 0, background: "transparent", color: "#FFFFFF", fontSize: 30, cursor: "pointer" }}
-          >
-            &times;
-          </button>
-        </div>
-      )}
-    </>
+        ))}
+      </div>
+    </div>
   );
 }
 
-function ProjectsList({ projects, selectedId, onSelect, colTemplate, openId, onToggleImages }) {
+function ProjectsList({ projects, selectedId, onSelect, colTemplate }) {
+  const [expandedRows, setExpandedRows] = useState({});
   const toggleRow = (id, e) => {
     e.stopPropagation();
-    onSelect(id);
-    onToggleImages(openId === id ? null : id);
+    setExpandedRows((r) => ({ ...r, [id]: !r[id] }));
   };
 
   return (
     <div style={{ fontFamily: "'Work Sans', sans-serif" }}>
       {projects.map((p) => {
         const isSelected = p.id === selectedId;
-        const isOpen = openId === p.id;
+        const isOpen = !!expandedRows[p.id];
         return (
           <div
             key={p.id}
@@ -1447,10 +1155,7 @@ function ProjectsList({ projects, selectedId, onSelect, colTemplate, openId, onT
               transition: "background 0.25s ease",
               padding: "9px 10px",
             }}
-            onClick={() => {
-              onSelect(p.id);
-              onToggleImages(p.id);
-            }}
+            onClick={() => onSelect(p.id)}
           >
             <span style={{ fontSize: 11.5 }}>{p.year}</span>
             <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.season}</span>
@@ -1481,6 +1186,7 @@ function ProjectsList({ projects, selectedId, onSelect, colTemplate, openId, onT
                 }}
               />
             </button>
+            {isOpen && p.images && p.images.length > 0 && <ProjectRowGallery images={p.images} />}
           </div>
         );
       })}
@@ -1601,34 +1307,31 @@ function FieldAccordion({ item, fieldDefs, t, emptyMessage }) {
 
 function ProjectsBody({ lang, t }) {
   const [selectedId, setSelectedId] = useState(PROJECTS[2].id); // default to the fully-populated example row
-  const [openId, setOpenId] = useState(PROJECTS[2].id);
   const project = PROJECTS.find((p) => p.id === selectedId);
-  const galleryProject = PROJECTS.find((p) => p.id === openId) || project;
   const colTemplate = "56px 74px 110px 1.4fr 160px 1.6fr 28px";
 
   return (
     <div>
-      <ProjectsList projects={PROJECTS} selectedId={selectedId} onSelect={setSelectedId} colTemplate={colTemplate} openId={openId} onToggleImages={setOpenId} />
-      {galleryProject && <ProjectRowGallery images={galleryProject.images || []} title={galleryProject.title} />}
-      <div style={{ paddingTop: 34 }}>
+      <ProjectsList projects={PROJECTS} selectedId={selectedId} onSelect={setSelectedId} colTemplate={colTemplate} />
+      <div style={{ marginTop: 40, borderTop: "1px solid #E2E2ED", paddingTop: 24 }}>
         <FieldAccordion item={project} fieldDefs={FIELD_DEFS} t={t} emptyMessage={t.selectProject} />
       </div>
     </div>
   );
 }
 
-function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) {
+function StudiesList({ studies, selectedId, onSelect }) {
+  const [expandedRows, setExpandedRows] = useState({});
   const toggleRow = (id, e) => {
     e.stopPropagation();
-    onSelect(id);
-    onToggleImages(openId === id ? null : id);
+    setExpandedRows((r) => ({ ...r, [id]: !r[id] }));
   };
 
   return (
     <div style={{ fontFamily: "'Work Sans', sans-serif" }}>
       {studies.map((s) => {
         const isSelected = s.id === selectedId;
-        const isOpen = openId === s.id;
+        const isOpen = !!expandedRows[s.id];
         return (
           <div
             key={s.id}
@@ -1642,10 +1345,7 @@ function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) 
               transition: "background 0.25s ease",
               padding: "10px 10px",
             }}
-            onClick={() => {
-              onSelect(s.id);
-              onToggleImages(s.id);
-            }}
+            onClick={() => onSelect(s.id)}
           >
             <span style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               {s.academic.map((a, i) => (
@@ -1678,6 +1378,7 @@ function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) 
                 }}
               />
             </button>
+            {isOpen && s.images && s.images.length > 0 && <ProjectRowGallery images={s.images} />}
           </div>
         );
       })}
@@ -1686,16 +1387,13 @@ function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) 
 }
 
 function StudiesBody({ lang, t }) {
-  const [selectedId, setSelectedId] = useState(STUDIES[2].id); // Korean Architectures is the default study
-  const [openId, setOpenId] = useState(STUDIES[2].id);
+  const [selectedId, setSelectedId] = useState(STUDIES[1].id); // default to the row highlighted in the wireframe
   const study = STUDIES.find((s) => s.id === selectedId);
-  const galleryStudy = STUDIES.find((s) => s.id === openId) || study;
 
   return (
     <div>
-      <StudiesList studies={STUDIES} selectedId={selectedId} onSelect={setSelectedId} openId={openId} onToggleImages={setOpenId} />
-      {galleryStudy && <ProjectRowGallery images={galleryStudy.images || []} title={galleryStudy.area} />}
-      <div style={{ paddingTop: 34 }}>
+      <StudiesList studies={STUDIES} selectedId={selectedId} onSelect={setSelectedId} />
+      <div style={{ marginTop: 40, borderTop: "1px solid #E2E2ED", paddingTop: 24 }}>
         <FieldAccordion item={study} fieldDefs={STUDY_FIELD_DEFS} t={t} emptyMessage={t.selectStudy} />
       </div>
     </div>
@@ -1921,15 +1619,6 @@ export default function App() {
         @keyframes rowExpand {
           from { opacity: 0; transform: translateY(-6px); }
           to { opacity: 1; transform: translateY(0); }
-        }
-        @media (max-width: 760px) {
-          .project-image-gallery {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 24px !important;
-          }
-          .project-gallery-item {
-            transform: none !important;
-          }
         }
         @media (prefers-reduced-motion: reduce) {
           * { transition: none !important; animation: none !important; }
@@ -2212,7 +1901,7 @@ export default function App() {
           </div>
 
           {/* Body — the only region that scrolls. Content depends on the active section. */}
-          <div data-scroll-region style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
+          <div style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
             {currentSection === "works" &&
               (selectedWork ? (
                 <WorkDetail artwork={selectedWork} lang={lang} firstImageRef={detailFirstImageRef} />
@@ -2234,7 +1923,7 @@ export default function App() {
                     rowGap: 0,
                   }}
                 >
-                  {sortedArtworks.map((a, index) => (
+                  {sortedArtworks.map((a) => (
                     <ArtworkCard
                       key={a.id}
                       artwork={a}
@@ -2243,13 +1932,6 @@ export default function App() {
                       frameRef={registerFrame(a.id)}
                       spanScale={filters.layout === 2 ? 2 : 1}
                       columnWidth={columnWidth}
-                      gridColumn={filters.layout === 1 ? (index % galleryColumns) + 1 : undefined}
-                      verticalGap={filters.layout === 1 ? 72 : 28}
-                      topOffset={
-                        filters.layout === 1 && index >= galleryColumns
-                          ? [24, 64, 104, 144][index % galleryColumns]
-                          : 0
-                      }
                     />
                   ))}
                 </div>
