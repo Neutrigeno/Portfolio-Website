@@ -1211,43 +1211,204 @@ function AboutBody({ lang, t, sections }) {
   );
 }
 
-function ProjectRowGallery({ images }) {
+function ProjectRowGallery({ images, title }) {
+  const [zoomedImage, setZoomedImage] = useState(null);
+  const [isDocked, setIsDocked] = useState(false);
+  const originalGalleryRef = useRef(null);
+  const centerIndex = Math.floor(images.length / 2);
+
+  useEffect(() => {
+    const gallery = originalGalleryRef.current;
+    const scrollRegion = gallery?.closest("[data-scroll-region]");
+    if (!gallery || !scrollRegion) return;
+
+    const updateDockedState = () => {
+      const galleryRect = gallery.getBoundingClientRect();
+      const scrollRect = scrollRegion.getBoundingClientRect();
+      setIsDocked(galleryRect.bottom <= scrollRect.top + 1);
+    };
+
+    updateDockedState();
+    scrollRegion.addEventListener("scroll", updateDockedState, { passive: true });
+    window.addEventListener("resize", updateDockedState);
+    return () => {
+      scrollRegion.removeEventListener("scroll", updateDockedState);
+      window.removeEventListener("resize", updateDockedState);
+    };
+  }, [images]);
+
+  useEffect(() => {
+    if (!zoomedImage) return;
+    const closeOnEscape = (event) => event.key === "Escape" && setZoomedImage(null);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [zoomedImage]);
+
   return (
-    <div
-      style={{
-        gridColumn: "1 / -1",
-        padding: "18px 0 22px 0",
-        animation: "rowExpand 0.35s ease",
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 360 }}>
+    <>
+      <div
+        ref={originalGalleryRef}
+        style={{
+          width: "calc(100% + 88px)",
+          marginLeft: -44,
+          boxSizing: "border-box",
+          padding: "38px 44px 42px",
+          borderTop: "1px solid #E2E2ED",
+          borderBottom: "1px solid #E2E2ED",
+          animation: "rowExpand 0.35s ease",
+        }}
+      >
+        <div
+          className="project-image-gallery"
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${Math.min(Math.max(images.length, 1), 5)}, minmax(0, 1fr))`,
+            gap: "clamp(20px, 3vw, 56px)",
+            alignItems: "center",
+          }}
+        >
         {images.map((img, i) => (
-          <div key={i}>
-            <ImageFrame src={img.image} alt={img.caption} aspectRatio={img.aspectRatio || "4 / 3"} />
+          <button
+            key={i}
+            className="project-gallery-item"
+            type="button"
+            onClick={() => setZoomedImage(img)}
+            aria-label={`Open ${img.caption || title || `image ${i + 1}`}`}
+            style={{
+              appearance: "none",
+              border: 0,
+              padding: 0,
+              background: "transparent",
+              textAlign: "left",
+              cursor: "zoom-in",
+              transform: i === centerIndex ? "scale(1.22)" : "scale(0.88)",
+              transformOrigin: "center",
+              transition: "transform 0.25s ease",
+              position: "relative",
+              zIndex: i === centerIndex ? 2 : 1,
+            }}
+          >
+            <ImageFrame src={img.image} alt={img.caption || title} aspectRatio={img.aspectRatio || "4 / 3"} />
             {img.caption && (
-              <div style={{ marginTop: 8, fontSize: 11, fontStyle: "italic", color: "#9A9A94", fontFamily: "'Work Sans', sans-serif" }}>
+              <div style={{ marginTop: 8, fontSize: 11, color: "#9A9A94", fontFamily: "'Work Sans', sans-serif" }}>
                 {img.caption}
               </div>
             )}
-          </div>
+          </button>
         ))}
+        </div>
       </div>
-    </div>
+
+      {isDocked && (
+        <div
+          className="docked-project-gallery"
+          aria-label={`${title || "Selected item"} image gallery`}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 168,
+            right: 0,
+            height: 104,
+            zIndex: 4,
+            boxSizing: "border-box",
+            padding: "10px 44px",
+            background: "rgba(255,255,255,0.96)",
+            borderBottom: "1px solid #E2E2ED",
+            display: "grid",
+            gridTemplateColumns: `repeat(${Math.min(Math.max(images.length, 1), 7)}, minmax(0, 1fr))`,
+            gap: "clamp(18px, 3vw, 52px)",
+            alignItems: "center",
+            animation: "dockGallery 0.28s ease",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          {images.map((img, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setZoomedImage(img)}
+              aria-label={`Open ${img.caption || title || `image ${i + 1}`}`}
+              title={img.caption || title}
+              style={{
+                height: i === centerIndex ? 82 : 64,
+                minWidth: 0,
+                padding: 0,
+                border: "1px solid #D5D5E4",
+                background: "#FAFAF8",
+                cursor: "zoom-in",
+                overflow: "hidden",
+                transition: "height 0.25s ease, border-color 0.25s ease",
+              }}
+            >
+              {img.image ? (
+                <img
+                  src={img.image}
+                  alt={img.caption || title}
+                  style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                />
+              ) : (
+                <Plus size={16} strokeWidth={1} style={{ color: "#C7C7C2" }} />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {zoomedImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={zoomedImage.caption || title || "Image preview"}
+          onClick={() => setZoomedImage(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(18, 18, 28, 0.9)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 32,
+            boxSizing: "border-box",
+            cursor: "zoom-out",
+          }}
+        >
+          <img
+            src={zoomedImage.image}
+            alt={zoomedImage.caption || title}
+            onClick={(event) => event.stopPropagation()}
+            style={{ maxWidth: "92vw", maxHeight: "78vh", objectFit: "contain", display: "block" }}
+          />
+          <div style={{ marginTop: 18, color: "#FFFFFF", fontSize: 14, letterSpacing: "0.03em", textAlign: "center" }}>
+            {zoomedImage.caption || title}
+          </div>
+          <button
+            type="button"
+            onClick={() => setZoomedImage(null)}
+            aria-label="Close image preview"
+            style={{ position: "absolute", top: 22, right: 26, border: 0, background: "transparent", color: "#FFFFFF", fontSize: 30, cursor: "pointer" }}
+          >
+            &times;
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
-function ProjectsList({ projects, selectedId, onSelect, colTemplate }) {
-  const [expandedRows, setExpandedRows] = useState({});
+function ProjectsList({ projects, selectedId, onSelect, colTemplate, openId, onToggleImages }) {
   const toggleRow = (id, e) => {
     e.stopPropagation();
-    setExpandedRows((r) => ({ ...r, [id]: !r[id] }));
+    onSelect(id);
+    onToggleImages(openId === id ? null : id);
   };
 
   return (
     <div style={{ fontFamily: "'Work Sans', sans-serif" }}>
       {projects.map((p) => {
         const isSelected = p.id === selectedId;
-        const isOpen = !!expandedRows[p.id];
+        const isOpen = openId === p.id;
         return (
           <div
             key={p.id}
@@ -1292,7 +1453,6 @@ function ProjectsList({ projects, selectedId, onSelect, colTemplate }) {
                 }}
               />
             </button>
-            {isOpen && p.images && p.images.length > 0 && <ProjectRowGallery images={p.images} />}
           </div>
         );
       })}
@@ -1413,31 +1573,34 @@ function FieldAccordion({ item, fieldDefs, t, emptyMessage }) {
 
 function ProjectsBody({ lang, t }) {
   const [selectedId, setSelectedId] = useState(PROJECTS[2].id); // default to the fully-populated example row
+  const [openId, setOpenId] = useState(PROJECTS[2].id);
   const project = PROJECTS.find((p) => p.id === selectedId);
+  const galleryProject = PROJECTS.find((p) => p.id === openId);
   const colTemplate = "56px 74px 110px 1.4fr 160px 1.6fr 28px";
 
   return (
     <div>
-      <ProjectsList projects={PROJECTS} selectedId={selectedId} onSelect={setSelectedId} colTemplate={colTemplate} />
-      <div style={{ marginTop: 40, borderTop: "1px solid #E2E2ED", paddingTop: 24 }}>
+      <ProjectsList projects={PROJECTS} selectedId={selectedId} onSelect={setSelectedId} colTemplate={colTemplate} openId={openId} onToggleImages={setOpenId} />
+      {galleryProject?.images?.length > 0 && <ProjectRowGallery images={galleryProject.images} title={galleryProject.title} />}
+      <div style={{ paddingTop: 34 }}>
         <FieldAccordion item={project} fieldDefs={FIELD_DEFS} t={t} emptyMessage={t.selectProject} />
       </div>
     </div>
   );
 }
 
-function StudiesList({ studies, selectedId, onSelect }) {
-  const [expandedRows, setExpandedRows] = useState({});
+function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) {
   const toggleRow = (id, e) => {
     e.stopPropagation();
-    setExpandedRows((r) => ({ ...r, [id]: !r[id] }));
+    onSelect(id);
+    onToggleImages(openId === id ? null : id);
   };
 
   return (
     <div style={{ fontFamily: "'Work Sans', sans-serif" }}>
       {studies.map((s) => {
         const isSelected = s.id === selectedId;
-        const isOpen = !!expandedRows[s.id];
+        const isOpen = openId === s.id;
         return (
           <div
             key={s.id}
@@ -1484,7 +1647,6 @@ function StudiesList({ studies, selectedId, onSelect }) {
                 }}
               />
             </button>
-            {isOpen && s.images && s.images.length > 0 && <ProjectRowGallery images={s.images} />}
           </div>
         );
       })}
@@ -1494,12 +1656,15 @@ function StudiesList({ studies, selectedId, onSelect }) {
 
 function StudiesBody({ lang, t }) {
   const [selectedId, setSelectedId] = useState(STUDIES[1].id); // default to the row highlighted in the wireframe
+  const [openId, setOpenId] = useState(STUDIES[1].id);
   const study = STUDIES.find((s) => s.id === selectedId);
+  const galleryStudy = STUDIES.find((s) => s.id === openId);
 
   return (
     <div>
-      <StudiesList studies={STUDIES} selectedId={selectedId} onSelect={setSelectedId} />
-      <div style={{ marginTop: 40, borderTop: "1px solid #E2E2ED", paddingTop: 24 }}>
+      <StudiesList studies={STUDIES} selectedId={selectedId} onSelect={setSelectedId} openId={openId} onToggleImages={setOpenId} />
+      {galleryStudy?.images?.length > 0 && <ProjectRowGallery images={galleryStudy.images} title={galleryStudy.area} />}
+      <div style={{ paddingTop: 34 }}>
         <FieldAccordion item={study} fieldDefs={STUDY_FIELD_DEFS} t={t} emptyMessage={t.selectStudy} />
       </div>
     </div>
@@ -1725,6 +1890,19 @@ export default function App() {
         @keyframes rowExpand {
           from { opacity: 0; transform: translateY(-6px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes dockGallery {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 760px) {
+          .project-image-gallery {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 24px !important;
+          }
+          .project-gallery-item {
+            transform: none !important;
+          }
         }
         @media (prefers-reduced-motion: reduce) {
           * { transition: none !important; animation: none !important; }
@@ -2007,7 +2185,7 @@ export default function App() {
           </div>
 
           {/* Body — the only region that scrolls. Content depends on the active section. */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
+          <div data-scroll-region style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
             {currentSection === "works" &&
               (selectedWork ? (
                 <WorkDetail artwork={selectedWork} lang={lang} firstImageRef={detailFirstImageRef} />
