@@ -332,9 +332,6 @@ const STUDIES = [
   {
     id: ++studyAutoId,
     academic: ["East Asian Art History & Culture"], area: "20th Century Korean Art",
-    images: [
-      { image: "https://picsum.photos/seed/study1/700/500", caption: "Field research, Seoul, 2024." },
-      { image: "https://picsum.photos/seed/study2/700/500", caption: "Archive materials reviewed for this study." },
     ],
     researchQuestion: "", terminology: "", scopeOfArea: "", methodology: "",
     researchSignificance: "", keyWords: "", references: "",
