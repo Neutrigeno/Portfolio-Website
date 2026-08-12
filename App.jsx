@@ -2244,7 +2244,7 @@ export default function App() {
                       spanScale={filters.layout === 2 ? 2 : 1}
                       columnWidth={columnWidth}
                       gridColumn={filters.layout === 1 ? (index % galleryColumns) + 1 : undefined}
-                      verticalGap={filters.layout === 1 ? 48 : 28}
+                      verticalGap={filters.layout === 1 ? 40 : 28}
                       topOffset={
                         filters.layout === 1 && index >= galleryColumns
                           ? [0, 20, 40, 60][index % galleryColumns]
