@@ -1,22 +1,32 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <link
-  rel="icon"
-  type="image/png"
-  href="./images/Favicon-black.png"
-  media="(prefers-color-scheme: light)"
->
+   <link
+    id="favicon"
+    rel="icon"
+    type="image/png"
+    href="./images/Favicon-black.png"
+   >
 
-<link
-  rel="icon"
-  type="image/png"
-  href="./images/Favicon-white.png"
-  media="(prefers-color-scheme: dark)"
->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio</title>
+   <script>
+    const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function updateFavicon() {
+      const favicon = document.getElementById("favicon");
+
+      favicon.href = darkMode.matches
+        ? "./images/Favicon-white.png"
+        : "./images/Favicon-black.png";
+    }
+
+    updateFavicon();
+
+    darkMode.addEventListener("change", updateFavicon);
+   </script>
+
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Portfolio</title>
   </head>
   <body style="margin: 0;">
     <div id="root"></div>
