@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Plus, Send, ChevronRight, ChevronLeft } from "lucide-react";
-
 /*
   FONT NOTE:
   Avenir is a licensed commercial font, so it can't be pulled from a free CDN.
@@ -8,17 +7,24 @@ import { Plus, Send, ChevronRight, ChevronLeft } from "lucide-react";
   If you own an Avenir license (e.g. Adobe Fonts / purchased files), replace the
   @import below with an @font-face block pointing to your .woff2 files and swap
   every "Jost" reference to your Avenir family name.
-
   LETTER-SPACING:
   Search this file for "letterSpacing" — each text role (nav, labels, titles)
   has its own value so you can nudge tracking independently.
-
   ADDING REAL ARTWORK:
   Edit the ARTWORKS array below. Give each piece an "image" URL and it will
   replace the placeholder box automatically. On the Works grid, each image keeps
   its natural aspect ratio; the masonry card height is measured automatically.
-*/
 
+  RESPONSIVE LAYOUT NOTE (added):
+  This file now branches on a `useViewport()` breakpoint (phone < 600px,
+  tablet 600–899px, desktop >= 900px). Anything below 900px is treated as
+  "compact": the left sidebar becomes a slim top bar + fixed bottom tab bar,
+  the Works filter row becomes a horizontally scrollable strip, Projects/
+  Studies rows become stacked cards on phone widths, and a few hardcoded
+  desktop offsets (the 44px content padding, the 168px sidebar width used by
+  the docked project-gallery bar) are now read from state instead of being
+  magic numbers. Search "COMPACT" to find each spot.
+*/
 const translations = {
   en: {
     works: "WORKS",
@@ -115,7 +121,6 @@ const translations = {
     selectStudy: "위에서 연구를 선택해 자세히 보세요.",
   },
 };
-
 // About-page copy. Only English is provided for the long-form text — add a "ko" array
 // per field if you want a translated version; UI labels above are already bilingual.
 const ABOUT_CONTENT = {
@@ -127,7 +132,6 @@ const ABOUT_CONTENT = {
     "Growth to the center of Chicago and the suburbs of South Korea affected the development of her work. During her school year, she worked in the art museum, which had great influence on the future of her work and her practice.",
   ],
 };
-
 // Projects-page data. Each entry is one row in the top list.
 // TO ADD A NEW PROJECT: copy an object below (even a mostly-empty one) and add it to
 // the array — it appears in the list immediately. Leave any accordion field ("purpose",
@@ -285,7 +289,6 @@ const PROJECTS = [
     institutionLogo: null,
   },
 ];
-
 // Accordion field order + which sidebar-style group (works/studies/about) each belongs to.
 // "labelKey" looks up the bilingual label from translations; special renderers below
 // handle "role" (list), "experience" (paired columns), and "institution" (logo + text).
@@ -302,14 +305,12 @@ const FIELD_DEFS = [
   { key: "takeaway", labelKey: "takeawayLabel", group: "works" },
   { key: "institution", labelKey: "institutionLabel", group: "works", kind: "institution" },
 ];
-
 function fieldHasContent(project, def) {
   if (def.kind === "list") return project[def.key] && project[def.key].length > 0;
   if (def.kind === "experience") return project.experience && project.experience.length > 0;
   if (def.kind === "institution") return !!project.institutionDesc;
   return !!project[def.key];
 }
-
 // Studies-page data — same shape/pattern as PROJECTS above.
 // TO ADD A NEW STUDY: copy an object below and add it to the array.
 // "academic" is an array so a row can list more than one field (see the last entry).
@@ -446,7 +447,6 @@ const STUDIES = [
     references: "",
   },
 ];
-
 // Grouped the same way as Projects: "about"/"projects"/"works" labels reuse the nav words,
 // positioned by group per the wireframe (Research Question + Terminology under About;
 // Scope of Area, Methodology, Research Significance, Key Words under Projects; References under Works).
@@ -629,7 +629,20 @@ const ARTWORKS = [
     ],
   },
 ];
-
+// COMPACT: single breakpoint hook everything below reads from. phone < 600, tablet
+// 600–899, desktop >= 900. "isCompact" (phone or tablet) is what collapses the sidebar.
+function useViewport() {
+  const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1280);
+  useEffect(() => {
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  const isPhone = width < 600;
+  const isTablet = width >= 600 && width < 900;
+  const isCompact = width < 900;
+  return { width, isPhone, isTablet, isCompact };
+}
 function useFadeIn() {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -650,7 +663,6 @@ function useFadeIn() {
   }, []);
   return [ref, visible];
 }
-
 function ImageFrame({ src, alt, aspectRatio, containerRef }) {
   const [hover, setHover] = useState(false);
   return (
@@ -686,19 +698,16 @@ function ImageFrame({ src, alt, aspectRatio, containerRef }) {
     </div>
   );
 }
-
 function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, columnWidth, verticalGap = 28, topOffset = 0, gridColumn, independentColumn = false }) {
   const [ref, visible] = useFadeIn();
   const [hover, setHover] = useState(false);
   const [naturalRatio, setNaturalRatio] = useState(null); // width / height of the real image
   const contentRef = useRef(null);
   const [contentHeight, setContentHeight] = useState(0);
-
   const handleLoad = (e) => {
     const { naturalWidth, naturalHeight } = e.target;
     if (naturalWidth && naturalHeight) setNaturalRatio(naturalWidth / naturalHeight);
   };
-
   // Measure the card's NATURAL content height (image at its real aspect ratio +
   // optional caption + stagger/gap spacing), then convert that height to 8px masonry rows.
   useLayoutEffect(() => {
@@ -710,11 +719,9 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
     obs.observe(el);
     return () => obs.disconnect();
   }, [showCaption, naturalRatio, columnWidth, verticalGap, topOffset]);
-
   const span = contentHeight
     ? Math.max(1, Math.ceil(contentHeight / 8))
     : Math.max(1, Math.round(artwork.span * spanScale));
-
   return (
     <div
       ref={ref}
@@ -779,37 +786,30 @@ function ArtworkCard({ artwork, showCaption, onOpen, frameRef, spanScale = 1, co
     </div>
   );
 }
-
-function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
+function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame, compact }) {
   const [index, setIndex] = useState(0);
   const [ratio, setRatio] = useState(16 / 10); // matches current image once loaded; sensible default before that
   const safeIndex = artworks.length ? index % artworks.length : 0;
   const current = artworks[safeIndex];
-
   useEffect(() => {
     if (index >= artworks.length) setIndex(0);
   }, [artworks.length]); // eslint-disable-line react-hooks/exhaustive-deps
-
   useEffect(() => {
     setRatio(16 / 10); // reset to default until the new slide's image reports its real ratio
   }, [safeIndex]);
-
   if (!current) return null;
-
   const prev = () => setIndex((i) => (i - 1 + artworks.length) % artworks.length);
   const next = () => setIndex((i) => (i + 1) % artworks.length);
-
   const handleLoad = (e) => {
     const { naturalWidth, naturalHeight } = e.target;
     if (naturalWidth && naturalHeight) setRatio(naturalWidth / naturalHeight);
   };
-
   const arrowStyle = {
     position: "absolute",
     top: "50%",
     transform: "translateY(-50%)",
-    width: 40,
-    height: 40,
+    width: compact ? 36 : 40,
+    height: compact ? 36 : 40,
     borderRadius: "50%",
     border: "1px solid #A9AAD1",
     background: "rgba(255,255,255,0.85)",
@@ -819,7 +819,6 @@ function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
     cursor: "pointer",
     transition: "border-color 0.25s ease",
   };
-
   return (
     <div>
       <div
@@ -848,44 +847,42 @@ function WorksSlideshow({ artworks, showCaption, onOpen, registerFrame }) {
         ) : (
           <Plus size={28} strokeWidth={1} style={{ color: "#C7C7C2" }} />
         )}
-
         <button
+          className="tap-target"
           onClick={(e) => {
             e.stopPropagation();
             prev();
           }}
-          style={{ ...arrowStyle, left: 16 }}
+          style={{ ...arrowStyle, left: compact ? 10 : 16 }}
           aria-label="Previous"
         >
           <ChevronLeft size={16} strokeWidth={1.5} style={{ color: "#1A1B4B" }} />
         </button>
         <button
+          className="tap-target"
           onClick={(e) => {
             e.stopPropagation();
             next();
           }}
-          style={{ ...arrowStyle, right: 16 }}
+          style={{ ...arrowStyle, right: compact ? 10 : 16 }}
           aria-label="Next"
         >
           <ChevronRight size={16} strokeWidth={1.5} style={{ color: "#1A1B4B" }} />
         </button>
       </div>
-
       {showCaption(current) && (
         <div style={{ paddingTop: 12, fontFamily: "'Work Sans', sans-serif" }}>
           <div style={{ fontSize: 13, letterSpacing: "0.01em", color: "#1A1B4B" }}>{current.title}</div>
           <div style={{ fontSize: 12, color: "#9A9A94" }}>{current.date}</div>
         </div>
       )}
-
       <div style={{ marginTop: 10, fontSize: 11, color: "#9A9A94", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em" }}>
         {safeIndex + 1} / {artworks.length}
       </div>
     </div>
   );
 }
-
-function WorkDetail({ artwork, lang, firstImageRef }) {
+function WorkDetail({ artwork, lang, firstImageRef, compact }) {
   const [imageSide, setImageSide] = useState("left"); // toggle to preview images on the right instead
   const images = artwork.detailImages && artwork.detailImages.length ? artwork.detailImages : [{ image: artwork.image, caption: "" }];
   const fields = [
@@ -894,7 +891,6 @@ function WorkDetail({ artwork, lang, firstImageRef }) {
     { label: lang === "ko" ? "매체" : "Medium", value: artwork.medium },
     { label: lang === "ko" ? "크기" : "Dimension", value: artwork.dimension },
   ].filter((f) => f.value);
-
   return (
     <div>
       {/* Example toggle — lets you compare images-left vs images-right live.
@@ -921,14 +917,13 @@ function WorkDetail({ artwork, lang, firstImageRef }) {
           </button>
         ))}
       </div>
-
-      <div style={{ display: "flex", gap: 64, alignItems: "flex-start", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: compact ? 28 : 64, alignItems: "flex-start", flexWrap: "wrap" }}>
         <div
           style={{
-            flex: "1 1 520px",
+            flex: compact ? "1 1 100%" : "1 1 520px",
             display: "flex",
             flexDirection: "column",
-            gap: 44,
+            gap: compact ? 28 : 44,
             order: imageSide === "right" ? 2 : 1,
           }}
         >
@@ -951,8 +946,7 @@ function WorkDetail({ artwork, lang, firstImageRef }) {
             </div>
           ))}
         </div>
-
-        <div style={{ flex: "1 1 280px", position: "sticky", top: 0, order: imageSide === "right" ? 1 : 2 }}>
+        <div style={{ flex: compact ? "1 1 100%" : "1 1 280px", position: compact ? "static" : "sticky", top: 0, order: imageSide === "right" ? 1 : 2 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 30 }}>
             {fields.map((f) => (
               <div key={f.label}>
@@ -989,11 +983,11 @@ function WorkDetail({ artwork, lang, firstImageRef }) {
     </div>
   );
 }
-
 function ReturnButton({ onClick, initials = "CA" }) {
   const [hover, setHover] = useState(false);
   return (
     <button
+      className="tap-target"
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -1019,14 +1013,12 @@ function ReturnButton({ onClick, initials = "CA" }) {
     </button>
   );
 }
-
-function AboutBody({ lang, t, sections }) {
+function AboutBody({ lang, t, sections, compact }) {
   const [email, setEmail] = useState("");
   const [subjectIdx, setSubjectIdx] = useState(null);
   const [message, setMessage] = useState("");
   const subjectKeys = ["projects", "studies", "works", "about"];
   const wordCount = message.trim() ? message.trim().split(/\s+/).length : 0;
-
   const handleMessageChange = (e) => {
     const val = e.target.value;
     const words = val.trim() ? val.trim().split(/\s+/) : [];
@@ -1036,23 +1028,20 @@ function AboutBody({ lang, t, sections }) {
       setMessage(words.slice(0, 100).join(" "));
     }
   };
-
   const handleSend = () => {
     const subjectLabel = subjectIdx !== null ? t[subjectKeys[subjectIdx]] : "";
     const mailSubject = `Portfolio inquiry${subjectLabel ? " — " + subjectLabel : ""}`;
     const body = `${email ? "Reply to: " + email + "\n\n" : ""}${message}`;
     window.location.href = `mailto:jshim10@artic.edu?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(body)}`;
   };
-
   const showText = sections.description || sections.bio;
-
   return (
-    <div style={{ display: "flex", gap: 64, alignItems: "flex-start", flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: compact ? 32 : 64, alignItems: "flex-start", flexWrap: "wrap" }}>
       {/* Description / Bio */}
       <div
         style={{
-          flex: sections.contact ? "1 1 480px" : "1 1 620px",
-          maxWidth: sections.contact ? 560 : 760,
+          flex: compact ? "1 1 100%" : sections.contact ? "1 1 480px" : "1 1 620px",
+          maxWidth: compact ? "100%" : sections.contact ? 560 : 760,
           transition: "max-width 0.4s ease, flex-basis 0.4s ease",
           display: "flex",
           flexDirection: "column",
@@ -1079,10 +1068,9 @@ function AboutBody({ lang, t, sections }) {
           <p style={{ fontSize: 13, color: "#9A9A94", fontStyle: "italic", margin: 0 }}>{t.selectSection}</p>
         )}
       </div>
-
       {/* Contact */}
       {sections.contact && (
-        <div style={{ flex: "0 0 300px", marginLeft: "auto", fontFamily: "'Work Sans', sans-serif" }}>
+        <div style={{ flex: compact ? "1 1 100%" : "0 0 300px", marginLeft: compact ? 0 : "auto", width: compact ? "100%" : undefined, fontFamily: "'Work Sans', sans-serif" }}>
           <div
             style={{
               fontSize: 11,
@@ -1094,7 +1082,6 @@ function AboutBody({ lang, t, sections }) {
           >
             {t.leaveMail}
           </div>
-
           <div style={{ marginBottom: 22 }}>
             <div style={{ fontSize: 10, letterSpacing: "0.1em", color: "#9A9A94", fontFamily: "'Jost', sans-serif", marginBottom: 6 }}>
               {t.emailAddress}
@@ -1112,10 +1099,10 @@ function AboutBody({ lang, t, sections }) {
                 fontFamily: "'Work Sans', sans-serif",
                 outline: "none",
                 background: "none",
+                boxSizing: "border-box",
               }}
             />
           </div>
-
           <div style={{ marginBottom: 22 }}>
             <div style={{ fontSize: 10, letterSpacing: "0.1em", color: "#9A9A94", fontFamily: "'Jost', sans-serif", marginBottom: 8 }}>
               {t.subject}
@@ -1143,7 +1130,6 @@ function AboutBody({ lang, t, sections }) {
               ))}
             </div>
           </div>
-
           <div style={{ marginBottom: 10 }}>
             <div style={{ fontSize: 10, letterSpacing: "0.1em", color: "#9A9A94", fontFamily: "'Jost', sans-serif", marginBottom: 6 }}>
               {t.descriptionLimit}
@@ -1160,11 +1146,11 @@ function AboutBody({ lang, t, sections }) {
                 fontFamily: "'Work Sans', sans-serif",
                 outline: "none",
                 resize: "vertical",
+                boxSizing: "border-box",
               }}
             />
             <div style={{ fontSize: 10, color: "#C7C7C2", marginTop: 4, textAlign: "right" }}>{wordCount}/100</div>
           </div>
-
           {message.trim().length > 0 && (
             <button
               onClick={handleSend}
@@ -1188,7 +1174,6 @@ function AboutBody({ lang, t, sections }) {
               {lang === "ko" ? "보내기" : "SEND"}
             </button>
           )}
-
           <div
             style={{
               marginTop: 40,
@@ -1207,29 +1192,24 @@ function AboutBody({ lang, t, sections }) {
     </div>
   );
 }
-
-function ProjectRowGallery({ images, title }) {
+function ProjectRowGallery({ images, title, padX = 44, dockedLeft = 168, compact }) {
   const [zoomedImage, setZoomedImage] = useState(null);
   const [page, setPage] = useState(0);
   const [isDocked, setIsDocked] = useState(false);
   const galleryAnchorRef = useRef(null);
-  const pageSize = 5;
+  const pageSize = compact ? 3 : 5;
   const pageCount = Math.max(1, Math.ceil(images.length / pageSize));
   const visibleImages = images.slice(page * pageSize, page * pageSize + pageSize);
-
   useEffect(() => setPage(0), [images]);
-
   useEffect(() => {
     const anchor = galleryAnchorRef.current;
     const scrollRegion = anchor?.closest("[data-scroll-region]");
     if (!anchor || !scrollRegion) return;
-
     const updateDockedState = () => {
       const anchorRect = anchor.getBoundingClientRect();
       const scrollRect = scrollRegion.getBoundingClientRect();
       setIsDocked(anchorRect.bottom <= scrollRect.top + 1);
     };
-
     updateDockedState();
     scrollRegion.addEventListener("scroll", updateDockedState, { passive: true });
     window.addEventListener("resize", updateDockedState);
@@ -1238,7 +1218,6 @@ function ProjectRowGallery({ images, title }) {
       window.removeEventListener("resize", updateDockedState);
     };
   }, [images]);
-
   useEffect(() => {
     if (!zoomedImage) return;
     const handleLightboxKey = (event) => {
@@ -1255,26 +1234,23 @@ function ProjectRowGallery({ images, title }) {
     window.addEventListener("keydown", handleLightboxKey);
     return () => window.removeEventListener("keydown", handleLightboxKey);
   }, [zoomedImage, images]);
-
   const showPreviousZoomedImage = (event) => {
     event.stopPropagation();
     const current = images.indexOf(zoomedImage);
     setZoomedImage(images[(current - 1 + images.length) % images.length]);
   };
-
   const showNextZoomedImage = (event) => {
     event.stopPropagation();
     const current = images.indexOf(zoomedImage);
     setZoomedImage(images[(current + 1) % images.length]);
   };
-
   if (images.length === 0) {
     return (
       <div
         aria-hidden="true"
         style={{
-          width: "calc(100% + 88px)",
-          marginLeft: -44,
+          width: `calc(100% + ${padX * 2}px)`,
+          marginLeft: -padX,
           marginTop: 32,
           height: 1,
           background: "#E2E2ED",
@@ -1282,19 +1258,18 @@ function ProjectRowGallery({ images, title }) {
       />
     );
   }
-
   return (
     <>
       <div
         ref={galleryAnchorRef}
-        style={{ width: "calc(100% + 88px)", marginLeft: -44, marginTop: 32, height: 104 }}
+        style={{ width: `calc(100% + ${padX * 2}px)`, marginLeft: -padX, marginTop: 32, height: compact ? 88 : 104 }}
       >
         <div
           style={{
           width: isDocked ? "auto" : "100%",
-          height: 104,
+          height: compact ? 88 : 104,
           boxSizing: "border-box",
-          padding: "12px 44px",
+          padding: `12px ${padX}px`,
           borderTop: "1px solid #E2E2ED",
           borderBottom: "1px solid #E2E2ED",
           background: "rgba(255,255,255,0.97)",
@@ -1303,11 +1278,11 @@ function ProjectRowGallery({ images, title }) {
           gridTemplateColumns: "36px minmax(0, 1fr) 36px",
           alignItems: "center",
           ...(isDocked
-            ? { position: "fixed", top: 0, left: 168, right: 0, zIndex: 20, backdropFilter: "blur(8px)" }
+            ? { position: "fixed", top: 0, left: dockedLeft, right: 0, zIndex: 20, backdropFilter: "blur(8px)" }
             : { position: "relative" }),
         }}
       >
-        <button type="button" onClick={() => setPage((p) => Math.max(0, p - 1))} aria-label="Show previous images"
+        <button type="button" className="tap-target" onClick={() => setPage((p) => Math.max(0, p - 1))} aria-label="Show previous images"
           style={{ width: 32, height: 32, display: page > 0 ? "flex" : "none", alignItems: "center", justifyContent: "center", border: 0, background: "transparent", color: "#1A1B4B", cursor: "pointer" }}>
           <ChevronLeft size={22} strokeWidth={1.5} />
         </button>
@@ -1318,7 +1293,7 @@ function ProjectRowGallery({ images, title }) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            gap: "clamp(20px, 4vw, 64px)",
+            gap: compact ? "clamp(12px, 4vw, 32px)" : "clamp(20px, 4vw, 64px)",
             minWidth: 0,
           }}
         >
@@ -1332,8 +1307,8 @@ function ProjectRowGallery({ images, title }) {
             title={img.caption || title}
             style={{
               appearance: "none",
-              maxWidth: 156,
-              maxHeight: 68,
+              maxWidth: compact ? 96 : 156,
+              maxHeight: compact ? 56 : 68,
               flex: "0 1 auto",
               display: "flex",
               alignItems: "center",
@@ -1346,18 +1321,17 @@ function ProjectRowGallery({ images, title }) {
             }}
           >
             {img.image ? <img src={img.image} alt={img.caption || title}
-              style={{ width: "auto", height: "auto", maxWidth: 152, maxHeight: 64, objectFit: "contain", display: "block" }} />
+              style={{ width: "auto", height: "auto", maxWidth: compact ? 92 : 152, maxHeight: compact ? 52 : 64, objectFit: "contain", display: "block" }} />
               : <Plus size={18} strokeWidth={1} style={{ color: "#C7C7C2" }} />}
           </button>
         ))}
         </div>
-        <button type="button" onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))} aria-label="Show more images"
+        <button type="button" className="tap-target" onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))} aria-label="Show more images"
           style={{ gridColumn: 3, width: 32, height: 32, display: page < pageCount - 1 ? "flex" : "none", alignItems: "center", justifyContent: "center", border: 0, background: "transparent", color: "#1A1B4B", cursor: "pointer" }}>
           <ChevronRight size={22} strokeWidth={1.5} />
         </button>
         </div>
       </div>
-
       {zoomedImage && (
         <div
           role="dialog"
@@ -1373,7 +1347,7 @@ function ProjectRowGallery({ images, title }) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: 32,
+            padding: compact ? 16 : 32,
             boxSizing: "border-box",
             cursor: "zoom-out",
           }}
@@ -1381,11 +1355,12 @@ function ProjectRowGallery({ images, title }) {
           {images.length > 1 && (
             <button
               type="button"
+              className="tap-target"
               onClick={showPreviousZoomedImage}
               aria-label="Previous enlarged image"
               style={{
-                position: "absolute", left: "clamp(18px, 4vw, 72px)", top: "50%",
-                transform: "translateY(-50%)", width: 50, height: 50, borderRadius: "50%",
+                position: "absolute", left: "clamp(10px, 4vw, 72px)", top: "50%",
+                transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%",
                 border: "1px solid rgba(255,255,255,0.75)", background: "rgba(18,18,28,0.35)",
                 color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", zIndex: 2,
@@ -1403,11 +1378,12 @@ function ProjectRowGallery({ images, title }) {
           {images.length > 1 && (
             <button
               type="button"
+              className="tap-target"
               onClick={showNextZoomedImage}
               aria-label="Next enlarged image"
               style={{
-                position: "absolute", right: "clamp(18px, 4vw, 72px)", top: "50%",
-                transform: "translateY(-50%)", width: 50, height: 50, borderRadius: "50%",
+                position: "absolute", right: "clamp(10px, 4vw, 72px)", top: "50%",
+                transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%",
                 border: "1px solid rgba(255,255,255,0.75)", background: "rgba(18,18,28,0.35)",
                 color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", zIndex: 2,
@@ -1422,9 +1398,10 @@ function ProjectRowGallery({ images, title }) {
           </div>
           <button
             type="button"
+            className="tap-target"
             onClick={() => setZoomedImage(null)}
             aria-label="Close image preview"
-            style={{ position: "absolute", top: 22, right: 26, border: 0, background: "transparent", color: "#FFFFFF", fontSize: 30, cursor: "pointer" }}
+            style={{ position: "absolute", top: 18, right: 18, border: 0, background: "transparent", color: "#FFFFFF", fontSize: 30, cursor: "pointer" }}
           >
             &times;
           </button>
@@ -1433,77 +1410,144 @@ function ProjectRowGallery({ images, title }) {
     </>
   );
 }
-
-function ProjectsList({ projects, selectedId, onSelect, colTemplate, openId, onToggleImages }) {
+// COMPACT: on phone widths the fixed-pixel grid table ("colTemplate") can't fit real
+// content (org names, titles) without overflowing, so `stacked` swaps in a card layout —
+// same data, same click/toggle behavior, just laid out vertically per row.
+function ProjectsList({ projects, selectedId, onSelect, colTemplate, openId, onToggleImages, stacked }) {
   const toggleRow = (id, e) => {
     e.stopPropagation();
     onSelect(id);
     onToggleImages(openId === id ? null : id);
   };
-
-  return (
-    <div style={{ fontFamily: "'Work Sans', sans-serif" }}>
-      {projects.map((p) => {
-        const isSelected = p.id === selectedId;
-        const isOpen = openId === p.id;
-        return (
-          <div
-            key={p.id}
-            style={{
-              display: "grid",
-              gridTemplateColumns: colTemplate,
-              alignItems: "center",
-              background: isSelected ? "#EDEDEA" : "transparent",
-              borderRadius: 14,
-              cursor: "pointer",
-              transition: "background 0.25s ease",
-              padding: "9px 10px",
-            }}
-            onClick={() => {
-              onSelect(p.id);
-              onToggleImages(p.id);
-            }}
-          >
-            <span style={{ fontSize: 11.5 }}>{p.year}</span>
-            <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.season}</span>
-            <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.type}</span>
-            <span style={{ fontSize: 11.5 }}>{p.org}</span>
-            <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.location}</span>
-            <span style={{ fontSize: 11.5, letterSpacing: "0.02em" }}>{p.title}</span>
-            <button
-              onClick={(e) => toggleRow(p.id, e)}
-              aria-label="Toggle project images"
+  if (stacked) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, fontFamily: "'Work Sans', sans-serif" }}>
+        {projects.map((p) => {
+          const isSelected = p.id === selectedId;
+          const isOpen = openId === p.id;
+          return (
+            <div
+              key={p.id}
+              onClick={() => {
+                onSelect(p.id);
+                onToggleImages(p.id);
+              }}
               style={{
-                justifySelf: "end",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 4,
                 display: "flex",
-                alignItems: "center",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                gap: 10,
+                background: isSelected ? "#EDEDEA" : "transparent",
+                border: isSelected ? "none" : "1px solid #EDEDEA",
+                borderRadius: 14,
+                cursor: "pointer",
+                padding: "12px 14px",
+                boxSizing: "border-box",
               }}
             >
-              <ChevronRight
-                size={15}
-                strokeWidth={1.5}
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", fontSize: 11, color: "#9A9A94" }}>
+                  <span>{p.year}</span>
+                  <span>{p.season}</span>
+                  <span>{p.type}</span>
+                </div>
+                <div style={{ fontSize: 12.5, fontWeight: 500 }}>{p.org}</div>
+                <div style={{ fontSize: 11, color: "#9A9A94" }}>{p.location}</div>
+                <div style={{ fontSize: 12.5, letterSpacing: "0.02em", marginTop: 2 }}>{p.title}</div>
+              </div>
+              <button
+                className="tap-target"
+                onClick={(e) => toggleRow(p.id, e)}
+                aria-label="Toggle project images"
                 style={{
-                  color: "#9A9A94",
-                  transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
+                  flexShrink: 0,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 4,
+                  display: "flex",
+                  alignItems: "center",
                 }}
-              />
-            </button>
-          </div>
-        );
-      })}
+              >
+                <ChevronRight
+                  size={16}
+                  strokeWidth={1.5}
+                  style={{
+                    color: "#9A9A94",
+                    transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
+                  }}
+                />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+  return (
+    <div style={{ fontFamily: "'Work Sans', sans-serif", overflowX: "auto" }}>
+      <div style={{ minWidth: 620 }}>
+        {projects.map((p) => {
+          const isSelected = p.id === selectedId;
+          const isOpen = openId === p.id;
+          return (
+            <div
+              key={p.id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: colTemplate,
+                alignItems: "center",
+                background: isSelected ? "#EDEDEA" : "transparent",
+                borderRadius: 14,
+                cursor: "pointer",
+                transition: "background 0.25s ease",
+                padding: "9px 10px",
+              }}
+              onClick={() => {
+                onSelect(p.id);
+                onToggleImages(p.id);
+              }}
+            >
+              <span style={{ fontSize: 11.5 }}>{p.year}</span>
+              <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.season}</span>
+              <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.type}</span>
+              <span style={{ fontSize: 11.5 }}>{p.org}</span>
+              <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{p.location}</span>
+              <span style={{ fontSize: 11.5, letterSpacing: "0.02em" }}>{p.title}</span>
+              <button
+                onClick={(e) => toggleRow(p.id, e)}
+                aria-label="Toggle project images"
+                style={{
+                  justifySelf: "end",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 4,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <ChevronRight
+                  size={15}
+                  strokeWidth={1.5}
+                  style={{
+                    color: "#9A9A94",
+                    transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
+                  }}
+                />
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
-
 function ProjectField({ def, project, t }) {
   const hasContent = fieldHasContent(project, def);
   const [open, setOpen] = useState(hasContent);
-
   return (
     <div style={{ borderBottom: "1px solid #EDEDEA", padding: "10px 0" }}>
       <button
@@ -1524,7 +1568,6 @@ function ProjectField({ def, project, t }) {
       >
         {t[def.labelKey]}
       </button>
-
       {hasContent && open && (
         <div style={{ marginTop: 12, paddingLeft: 4, fontFamily: "'Work Sans', sans-serif" }}>
           {def.kind === "list" && (
@@ -1536,7 +1579,6 @@ function ProjectField({ def, project, t }) {
               ))}
             </div>
           )}
-
           {def.kind === "experience" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               {project.experience.map((row, i) => (
@@ -1556,7 +1598,6 @@ function ProjectField({ def, project, t }) {
               ))}
             </div>
           )}
-
           {def.kind === "institution" && (
             <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap" }}>
               <p style={{ flex: "1 1 380px", fontSize: 13, color: "#333333", lineHeight: 1.7, margin: 0, whiteSpace: "pre-line" }}>
@@ -1567,7 +1608,6 @@ function ProjectField({ def, project, t }) {
               </div>
             </div>
           )}
-
           {!def.kind && (
             <p style={{ fontSize: 13, color: "#333333", lineHeight: 1.7, margin: 0, maxWidth: 640, whiteSpace: "pre-line" }}>{project[def.key]}</p>
           )}
@@ -1576,8 +1616,9 @@ function ProjectField({ def, project, t }) {
     </div>
   );
 }
-
-function FieldAccordion({ item, fieldDefs, t, emptyMessage }) {
+// COMPACT: on narrow screens the fixed 80px label column is dropped in favor of the
+// group label stacking above its field instead of sitting beside it.
+function FieldAccordion({ item, fieldDefs, t, emptyMessage, compact }) {
   let lastGroup = null;
   if (!item) return <p style={{ fontSize: 13, color: "#9A9A94" }}>{emptyMessage}</p>;
   return (
@@ -1586,8 +1627,8 @@ function FieldAccordion({ item, fieldDefs, t, emptyMessage }) {
         const showGroupLabel = def.group !== lastGroup;
         lastGroup = def.group;
         return (
-          <div key={item.id + "-" + def.key} style={{ display: "flex", gap: 24 }}>
-            <div style={{ width: 80, flexShrink: 0, paddingTop: 14 }}>
+          <div key={item.id + "-" + def.key} style={{ display: "flex", flexDirection: compact ? "column" : "row", gap: compact ? 2 : 24 }}>
+            <div style={{ width: compact ? "auto" : 80, flexShrink: 0, paddingTop: compact ? (showGroupLabel ? 14 : 0) : 14 }}>
               {showGroupLabel && (
                 <div
                   style={{
@@ -1610,110 +1651,173 @@ function FieldAccordion({ item, fieldDefs, t, emptyMessage }) {
     </div>
   );
 }
-
-function ProjectsBody({ lang, t }) {
+function ProjectsBody({ lang, t, stacked, padX, dockedLeft, compact }) {
   const [selectedId, setSelectedId] = useState(PROJECTS[2].id); // default to the fully-populated example row
   const [openId, setOpenId] = useState(PROJECTS[2].id);
   const project = PROJECTS.find((p) => p.id === selectedId);
   const galleryProject = PROJECTS.find((p) => p.id === openId) || project;
   const colTemplate = "56px 74px 110px 1.4fr 160px 1.6fr 28px";
-
   return (
     <div>
-      <ProjectsList projects={PROJECTS} selectedId={selectedId} onSelect={setSelectedId} colTemplate={colTemplate} openId={openId} onToggleImages={setOpenId} />
-      {galleryProject && <ProjectRowGallery images={galleryProject.images || []} title={galleryProject.title} />}
+      <ProjectsList projects={PROJECTS} selectedId={selectedId} onSelect={setSelectedId} colTemplate={colTemplate} openId={openId} onToggleImages={setOpenId} stacked={stacked} />
+      {galleryProject && <ProjectRowGallery images={galleryProject.images || []} title={galleryProject.title} padX={padX} dockedLeft={dockedLeft} compact={compact} />}
       <div style={{ paddingTop: 34 }}>
-        <FieldAccordion item={project} fieldDefs={FIELD_DEFS} t={t} emptyMessage={t.selectProject} />
+        <FieldAccordion item={project} fieldDefs={FIELD_DEFS} t={t} emptyMessage={t.selectProject} compact={compact} />
       </div>
     </div>
   );
 }
-
-function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages }) {
+// COMPACT: same card-vs-table swap as ProjectsList, adapted to Studies' two columns
+// (academic tags + area) instead of Projects' six.
+function StudiesList({ studies, selectedId, onSelect, openId, onToggleImages, stacked }) {
   const toggleRow = (id, e) => {
     e.stopPropagation();
     onSelect(id);
     onToggleImages(openId === id ? null : id);
   };
-
-  return (
-    <div style={{ fontFamily: "'Work Sans', sans-serif" }}>
-      {studies.map((s) => {
-        const isSelected = s.id === selectedId;
-        const isOpen = openId === s.id;
-        return (
-          <div
-            key={s.id}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1.2fr 1.6fr 28px",
-              alignItems: "center",
-              background: isSelected ? "#EDEDEA" : "transparent",
-              borderRadius: 14,
-              cursor: "pointer",
-              transition: "background 0.25s ease",
-              padding: "10px 10px",
-            }}
-            onClick={() => {
-              onSelect(s.id);
-              onToggleImages(s.id);
-            }}
-          >
-            <span style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              {s.academic.map((a, i) => (
-                <span key={i} style={{ fontSize: 11.5 }}>
-                  {a}
-                </span>
-              ))}
-            </span>
-            <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{s.area}</span>
-            <button
-              onClick={(e) => toggleRow(s.id, e)}
-              aria-label="Toggle study images"
+  if (stacked) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, fontFamily: "'Work Sans', sans-serif" }}>
+        {studies.map((s) => {
+          const isSelected = s.id === selectedId;
+          const isOpen = openId === s.id;
+          return (
+            <div
+              key={s.id}
+              onClick={() => {
+                onSelect(s.id);
+                onToggleImages(s.id);
+              }}
               style={{
-                justifySelf: "end",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 4,
                 display: "flex",
-                alignItems: "center",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                gap: 10,
+                background: isSelected ? "#EDEDEA" : "transparent",
+                border: isSelected ? "none" : "1px solid #EDEDEA",
+                borderRadius: 14,
+                cursor: "pointer",
+                padding: "12px 14px",
+                boxSizing: "border-box",
               }}
             >
-              <ChevronRight
-                size={15}
-                strokeWidth={1.5}
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  {s.academic.map((a, i) => (
+                    <span key={i} style={{ fontSize: 12.5 }}>
+                      {a}
+                    </span>
+                  ))}
+                </div>
+                <div style={{ fontSize: 11, color: "#9A9A94" }}>{s.area}</div>
+              </div>
+              <button
+                className="tap-target"
+                onClick={(e) => toggleRow(s.id, e)}
+                aria-label="Toggle study images"
                 style={{
-                  color: "#9A9A94",
-                  transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
+                  flexShrink: 0,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 4,
+                  display: "flex",
+                  alignItems: "center",
                 }}
-              />
-            </button>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function StudiesBody({ lang, t }) {
-  const [selectedId, setSelectedId] = useState(STUDIES[2].id); // Korean Architectures is the default study
-  const [openId, setOpenId] = useState(STUDIES[2].id);
-  const study = STUDIES.find((s) => s.id === selectedId);
-  const galleryStudy = STUDIES.find((s) => s.id === openId) || study;
-
+              >
+                <ChevronRight
+                  size={16}
+                  strokeWidth={1.5}
+                  style={{
+                    color: "#9A9A94",
+                    transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
+                  }}
+                />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
   return (
-    <div>
-      <StudiesList studies={STUDIES} selectedId={selectedId} onSelect={setSelectedId} openId={openId} onToggleImages={setOpenId} />
-      {galleryStudy && <ProjectRowGallery images={galleryStudy.images || []} title={galleryStudy.area} />}
-      <div style={{ paddingTop: 34 }}>
-        <FieldAccordion item={study} fieldDefs={STUDY_FIELD_DEFS} t={t} emptyMessage={t.selectStudy} />
+    <div style={{ fontFamily: "'Work Sans', sans-serif", overflowX: "auto" }}>
+      <div style={{ minWidth: 420 }}>
+        {studies.map((s) => {
+          const isSelected = s.id === selectedId;
+          const isOpen = openId === s.id;
+          return (
+            <div
+              key={s.id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1.2fr 1.6fr 28px",
+                alignItems: "center",
+                background: isSelected ? "#EDEDEA" : "transparent",
+                borderRadius: 14,
+                cursor: "pointer",
+                transition: "background 0.25s ease",
+                padding: "10px 10px",
+              }}
+              onClick={() => {
+                onSelect(s.id);
+                onToggleImages(s.id);
+              }}
+            >
+              <span style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                {s.academic.map((a, i) => (
+                  <span key={i} style={{ fontSize: 11.5 }}>
+                    {a}
+                  </span>
+                ))}
+              </span>
+              <span style={{ fontSize: 11.5, color: "#9A9A94" }}>{s.area}</span>
+              <button
+                onClick={(e) => toggleRow(s.id, e)}
+                aria-label="Toggle study images"
+                style={{
+                  justifySelf: "end",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 4,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <ChevronRight
+                  size={15}
+                  strokeWidth={1.5}
+                  style={{
+                    color: "#9A9A94",
+                    transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
+                  }}
+                />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
-
+function StudiesBody({ lang, t, stacked, padX, dockedLeft, compact }) {
+  const [selectedId, setSelectedId] = useState(STUDIES[2].id); // Korean Architectures is the default study
+  const [openId, setOpenId] = useState(STUDIES[2].id);
+  const study = STUDIES.find((s) => s.id === selectedId);
+  const galleryStudy = STUDIES.find((s) => s.id === openId) || study;
+  return (
+    <div>
+      <StudiesList studies={STUDIES} selectedId={selectedId} onSelect={setSelectedId} openId={openId} onToggleImages={setOpenId} stacked={stacked} />
+      {galleryStudy && <ProjectRowGallery images={galleryStudy.images || []} title={galleryStudy.area} padX={padX} dockedLeft={dockedLeft} compact={compact} />}
+      <div style={{ paddingTop: 34 }}>
+        <FieldAccordion item={study} fieldDefs={STUDY_FIELD_DEFS} t={t} emptyMessage={t.selectStudy} compact={compact} />
+      </div>
+    </div>
+  );
+}
 function FilterLabel({ label }) {
   return (
     <span
@@ -1729,7 +1833,6 @@ function FilterLabel({ label }) {
     </span>
   );
 }
-
 function FilterPills({ options, selected, onSelect, multi }) {
   const isActive = (i) => (multi ? selected.includes(i) : selected === i);
   return (
@@ -1767,8 +1870,8 @@ function FilterPills({ options, selected, onSelect, multi }) {
     </div>
   );
 }
-
 export default function App() {
+  const { isPhone, isTablet, isCompact } = useViewport();
   const [lang, setLang] = useState("en");
   const [selectedNav, setSelectedNav] = useState(0); // index into navKeys
   const [selectedMediums, setSelectedMediums] = useState([0, 1]); // Painting and Sculpture selected by default
@@ -1776,18 +1879,15 @@ export default function App() {
   const [selectedWork, setSelectedWork] = useState(null); // artwork object when a works-detail page is open
   const [aboutSections, setAboutSections] = useState({ description: true, bio: false, contact: false });
   const toggleAboutSection = (key) => setAboutSections((s) => ({ ...s, [key]: !s[key] }));
-
   // Shared-element transition: the clicked thumbnail grows into the detail page's first image.
   const cardFrameRefs = useRef({});
   const detailFirstImageRef = useRef(null);
   const openTransitionRect = useRef(null);
-
   const openWork = (artwork) => {
     const el = cardFrameRefs.current[artwork.id];
     if (el) openTransitionRect.current = el.getBoundingClientRect();
     setSelectedWork(artwork);
   };
-
   useLayoutEffect(() => {
     if (!selectedWork) return;
     const old = openTransitionRect.current;
@@ -1808,16 +1908,18 @@ export default function App() {
     });
     openTransitionRect.current = null;
   }, [selectedWork]);
-
   const t = translations[lang];
   const navKeys = ["works", "projects", "studies", "about"];
   const currentSection = navKeys[selectedNav];
-  const HEADER_H = 104; // shared height for the corner box + filter bar row, so their divider lines align
-
+  const HEADER_H = 104; // shared height for the corner box + filter bar row, so their divider lines align (desktop only)
+  // COMPACT: content padding and the "docked" gallery bar's fixed left-offset both used
+  // to be hardcoded (44 / 168, tied to the desktop sidebar). Now they're derived from
+  // the breakpoint so ProjectRowGallery's math stays correct once the sidebar collapses.
+  const contentPadX = isPhone ? 16 : isCompact ? 24 : 44;
+  const dockedLeft = isCompact ? 0 : 168;
   // FLIP animation: the clicked label physically travels from its list position into the box.
   const navRefs = useRef({});
   const pendingRects = useRef(null);
-
   const handleNavClick = (idx) => {
     if (selectedWork) {
       // Coming back from a detail page — the box currently shows the return button,
@@ -1827,15 +1929,18 @@ export default function App() {
       return;
     }
     if (idx === selectedNav) return;
-    const rects = {};
-    navKeys.forEach((k) => {
-      const el = navRefs.current[k];
-      if (el) rects[k] = el.getBoundingClientRect();
-    });
-    pendingRects.current = rects;
+    if (!isCompact) {
+      // The FLIP-into-corner-box animation only applies to the desktop sidebar layout;
+      // the compact top/bottom bar just swaps the active tab directly.
+      const rects = {};
+      navKeys.forEach((k) => {
+        const el = navRefs.current[k];
+        if (el) rects[k] = el.getBoundingClientRect();
+      });
+      pendingRects.current = rects;
+    }
     setSelectedNav(idx);
   };
-
   useLayoutEffect(() => {
     const prev = pendingRects.current;
     if (!prev) return;
@@ -1860,11 +1965,9 @@ export default function App() {
     });
     pendingRects.current = null;
   }, [selectedNav]);
-
   const toggleFilter = (key, i) => {
     setFilters((f) => ({ ...f, [key]: f[key] === i ? null : i }));
   };
-
   const toggleMedium = (i) => {
     setSelectedMediums((prev) => {
       if (prev.includes(i)) {
@@ -1874,7 +1977,6 @@ export default function App() {
       return [...prev, i];
     });
   };
-
   // Medium always filters which pieces appear. Media controls captions only:
   // IMAGES (0): hide captions on everything. WORDS (1) / null: show captions on everything.
   // SELECTIVE (2): show captions only on pieces marked "curated" — every piece still appears.
@@ -1884,7 +1986,6 @@ export default function App() {
     if (filters.media === 2) return artwork.curated;
     return true;
   };
-
   // ORDER: CHRONO (0) sorts by date ascending, ALPHABET (1) sorts by title A–Z,
   // THEMATIC (2) / unset leaves pieces in the order you wrote them in the ARTWORKS
   // array — that's your manual curation, so reorder the array itself to change it.
@@ -1894,11 +1995,9 @@ export default function App() {
   } else if (filters.order === 1) {
     sortedArtworks.sort((a, b) => a.title.localeCompare(b.title));
   }
-
   const registerFrame = (id) => (el) => {
     cardFrameRefs.current[id] = el;
   };
-
   // Measure the gallery's available width so ArtworkCard can size each box to match
   // its image's real aspect ratio (no cropping), instead of a fixed guess.
   const galleryRef = useRef(null);
@@ -1912,16 +2011,17 @@ export default function App() {
     obs.observe(el);
     return () => obs.disconnect();
   }, [currentSection, filters.layout]);
-
-  const galleryColumns = filters.layout === 2 ? 2 : 4;
-  const galleryGap = 28;
+  // COMPACT: column count used to be fixed at 4 (or 2 for "TWO" layout) no matter the
+  // viewport. Now it scales down with the breakpoint so thumbnails stay legible on phone.
+  const baseGalleryColumns = filters.layout === 2 ? 2 : 4;
+  const galleryColumns = isPhone ? 1 : isTablet ? Math.min(2, baseGalleryColumns) : baseGalleryColumns;
+  const galleryGap = isPhone ? 16 : 28;
   const columnWidth = galleryWidth ? (galleryWidth - galleryGap * (galleryColumns - 1)) / galleryColumns : 0;
-
   return (
     <div
+      className="app-shell"
       style={{
         background: "#FFFFFF",
-        height: "100vh",
         overflow: "hidden",
         fontFamily: "'Work Sans', sans-serif",
         color: "#1A1B4B",
@@ -1930,6 +2030,19 @@ export default function App() {
     >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Work+Sans:wght@400;500&display=swap');
+        html, body, #root { margin: 0; padding: 0; }
+        /* COMPACT: 100vh includes the mobile browser chrome and clips content; 100dvh
+           tracks the real visible viewport. Kept as a class (not inline) so the dvh
+           override can layer on top of the vh fallback for older browsers. */
+        .app-shell { height: 100vh; }
+        @supports (height: 100dvh) {
+          .app-shell { height: 100dvh; }
+        }
+        /* COMPACT: bumps small circular/icon buttons to a touch-friendly ~44px hit area
+           on coarse-pointer (touch) devices without changing their visual size elsewhere. */
+        @media (pointer: coarse) {
+          .tap-target { min-width: 44px; min-height: 44px; }
+        }
         @keyframes rowExpand {
           from { opacity: 0; transform: translateY(-6px); }
           to { opacity: 1; transform: translateY(0); }
@@ -1947,9 +2060,9 @@ export default function App() {
           * { transition: none !important; animation: none !important; }
         }
       `}</style>
-
-      {/* Upper Works-filter divider — spans the entire viewport, including the sidebar. */}
-      {currentSection === "works" && !selectedWork && (
+      {/* Upper Works-filter divider — desktop only; the compact header row draws its own
+          borderBottom instead since its height is no longer fixed at HEADER_H. */}
+      {currentSection === "works" && !selectedWork && !isCompact && (
         <div
           style={{
             position: "absolute",
@@ -1963,140 +2076,211 @@ export default function App() {
           }}
         />
       )}
-
-      {/* Single continuous horizontal divider — drawn once, spanning full width, so it's
-          guaranteed pixel-straight where it crosses the sidebar's vertical line, instead of
-          relying on two separate borders lining up exactly. */}
-      <div
-        style={{
-          position: "absolute",
-          top: HEADER_H,
-          left: 0,
-          right: 0,
-          height: 1,
-          background: "#E2E2ED",
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      />
-
-      <div style={{ display: "flex", height: "100%" }}>
-        {/* Sidebar — fixed, always visible, never scrolls */}
+      {/* Single continuous horizontal divider — desktop only, see note above. */}
+      {!isCompact && (
         <div
           style={{
-            width: 168,
-            flexShrink: 0,
-            borderRight: "1px solid #E2E2ED",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            boxSizing: "border-box",
+            position: "absolute",
+            top: HEADER_H,
+            left: 0,
+            right: 0,
+            height: 1,
+            background: "#E2E2ED",
+            pointerEvents: "none",
+            zIndex: 1,
           }}
-        >
-          {/* Corner box — text sits near the bottom-right, where the sidebar's vertical line
-              actually meets the header row's horizontal line */}
+        />
+      )}
+      <div style={{ display: "flex", flexDirection: isCompact ? "column" : "row", height: "100%" }}>
+        {/* Sidebar — fixed, always visible, never scrolls. Desktop/wide-tablet only:
+            below the compact breakpoint this collapses into a top bar + bottom tab bar
+            (rendered further down) instead. */}
+        {!isCompact && (
           <div
             style={{
-              height: HEADER_H,
+              width: 168,
               flexShrink: 0,
+              borderRight: "1px solid #E2E2ED",
+              height: "100%",
               display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "flex-end",
-              paddingRight: 24,
-              paddingBottom: 14,
+              flexDirection: "column",
               boxSizing: "border-box",
             }}
           >
-            {selectedWork ? (
-              <ReturnButton onClick={() => setSelectedWork(null)} />
-            ) : (
-              <span
-                ref={(el) => (navRefs.current[navKeys[selectedNav]] = el)}
-                style={{
-                  display: "inline-block",
-                  fontFamily: "'Jost', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 400,
-                  letterSpacing: "0.34em",
-                  color: "#1A1B4B",
-                }}
-              >
-                {t[navKeys[selectedNav]]}
-              </span>
-            )}
-          </div>
-
-          {/* Remaining nav items — equal-height row bands guarantee identical spacing
-              between each one, independent of the language block below. */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              padding: "28px 24px 0 16px",
-              minHeight: 0,
-            }}
-          >
-            <div style={{ flex: 1, display: "grid", gridTemplateRows: "repeat(3, 1fr)", minHeight: 0 }}>
-              {navKeys.map((key, idx) =>
-                idx === selectedNav ? null : (
+            {/* Corner box — text sits near the bottom-right, where the sidebar's vertical line
+                actually meets the header row's horizontal line */}
+            <div
+              style={{
+                height: HEADER_H,
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "flex-end",
+                paddingRight: 24,
+                paddingBottom: 14,
+                boxSizing: "border-box",
+              }}
+            >
+              {selectedWork ? (
+                <ReturnButton onClick={() => setSelectedWork(null)} />
+              ) : (
+                <span
+                  ref={(el) => (navRefs.current[navKeys[selectedNav]] = el)}
+                  style={{
+                    display: "inline-block",
+                    fontFamily: "'Jost', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 400,
+                    letterSpacing: "0.34em",
+                    color: "#1A1B4B",
+                  }}
+                >
+                  {t[navKeys[selectedNav]]}
+                </span>
+              )}
+            </div>
+            {/* Remaining nav items — equal-height row bands guarantee identical spacing
+                between each one, independent of the language block below. */}
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                padding: "28px 24px 0 16px",
+                minHeight: 0,
+              }}
+            >
+              <div style={{ flex: 1, display: "grid", gridTemplateRows: "repeat(3, 1fr)", minHeight: 0 }}>
+                {navKeys.map((key, idx) =>
+                  idx === selectedNav ? null : (
+                    <button
+                      key={key}
+                      ref={(el) => (navRefs.current[key] = el)}
+                      onClick={() => handleNavClick(idx)}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        alignSelf: "start",
+                        textAlign: "right",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "'Jost', sans-serif",
+                        fontSize: 12.5,
+                        letterSpacing: "0.3em",
+                        fontWeight: 400,
+                        color: "#9A9A94",
+                        padding: 0,
+                        transition: "color 0.25s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "#1A1B4B")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#9A9A94")}
+                    >
+                      {t[key]}
+                    </button>
+                  )
+                )}
+              </div>
+              <div style={{ paddingBottom: 28 }}>
+                <div
+                  style={{
+                    fontSize: 10,
+                    marginBottom: 8,
+                    color: "#9A9A94",
+                    letterSpacing: "0.3em",
+                    fontFamily: "'Jost', sans-serif",
+                    textAlign: "right",
+                  }}
+                >
+                  {t.language}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <button
-                    key={key}
-                    ref={(el) => (navRefs.current[key] = el)}
-                    onClick={() => handleNavClick(idx)}
+                    onClick={() => setLang("en")}
                     style={{
                       display: "block",
                       width: "100%",
-                      alignSelf: "start",
                       textAlign: "right",
                       background: "none",
                       border: "none",
                       cursor: "pointer",
                       fontFamily: "'Jost', sans-serif",
-                      fontSize: 12.5,
-                      letterSpacing: "0.3em",
-                      fontWeight: 400,
-                      color: "#9A9A94",
-                      padding: 0,
+                      fontSize: 12,
+                      letterSpacing: "0.15em",
+                      color: lang === "en" ? "#1A1B4B" : "#C7C7C2",
                       transition: "color 0.25s ease",
+                      padding: 0,
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "#1A1B4B")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "#9A9A94")}
                   >
-                    {t[key]}
+                    ENG
                   </button>
-                )
-              )}
-            </div>
-
-            <div style={{ paddingBottom: 28 }}>
-              <div
-                style={{
-                  fontSize: 10,
-                  marginBottom: 8,
-                  color: "#9A9A94",
-                  letterSpacing: "0.3em",
-                  fontFamily: "'Jost', sans-serif",
-                  textAlign: "right",
-                }}
-              >
-                {t.language}
+                  <button
+                    onClick={() => setLang("ko")}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      textAlign: "right",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      fontFamily: "'Jost', sans-serif",
+                      fontSize: 12,
+                      letterSpacing: "0.1em",
+                      color: lang === "ko" ? "#1A1B4B" : "#C7C7C2",
+                      transition: "color 0.25s ease",
+                      padding: 0,
+                    }}
+                  >
+                    한국어
+                  </button>
+                </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            </div>
+          </div>
+        )}
+        {/* Main column */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", height: isCompact ? "auto" : "100%", minHeight: 0, minWidth: 0 }}>
+          {/* COMPACT top bar — replaces the sidebar's corner box + language block below
+              the breakpoint: current section title (or return button) + a small EN/KO toggle. */}
+          {isCompact && (
+            <div
+              style={{
+                height: 52,
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: `0 ${contentPadX}px`,
+                boxSizing: "border-box",
+                borderBottom: "1px solid #E2E2ED",
+              }}
+            >
+              {selectedWork ? (
+                <ReturnButton onClick={() => setSelectedWork(null)} />
+              ) : (
+                <span
+                  style={{
+                    fontFamily: "'Jost', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 400,
+                    letterSpacing: "0.22em",
+                    color: "#1A1B4B",
+                  }}
+                >
+                  {t[navKeys[selectedNav]]}
+                </span>
+              )}
+              <div style={{ display: "flex", gap: 14 }}>
                 <button
                   onClick={() => setLang("en")}
                   style={{
-                    display: "block",
-                    width: "100%",
-                    textAlign: "right",
                     background: "none",
                     border: "none",
                     cursor: "pointer",
                     fontFamily: "'Jost', sans-serif",
-                    fontSize: 12,
-                    letterSpacing: "0.15em",
+                    fontSize: 11,
+                    letterSpacing: "0.1em",
                     color: lang === "en" ? "#1A1B4B" : "#C7C7C2",
-                    transition: "color 0.25s ease",
                     padding: 0,
                   }}
                 >
@@ -2105,17 +2289,13 @@ export default function App() {
                 <button
                   onClick={() => setLang("ko")}
                   style={{
-                    display: "block",
-                    width: "100%",
-                    textAlign: "right",
                     background: "none",
                     border: "none",
                     cursor: "pointer",
                     fontFamily: "'Jost', sans-serif",
-                    fontSize: 12,
-                    letterSpacing: "0.1em",
+                    fontSize: 11,
+                    letterSpacing: "0.05em",
                     color: lang === "ko" ? "#1A1B4B" : "#C7C7C2",
-                    transition: "color 0.25s ease",
                     padding: 0,
                   }}
                 >
@@ -2123,82 +2303,96 @@ export default function App() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Main column */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", height: "100%", minWidth: 0 }}>
-          {/* Header row — fixed, aligns with the corner box height. Content depends on the active section. */}
+          )}
+          {/* Header row — fixed height on desktop, auto height + own border on compact.
+              Content depends on the active section. */}
           <div
             style={{
-              height: HEADER_H,
+              height: isCompact ? "auto" : HEADER_H,
               flexShrink: 0,
-              padding: "0 44px",
+              padding: isCompact ? `10px ${contentPadX}px` : "0 44px",
               display: "flex",
               alignItems: "center",
               boxSizing: "border-box",
               position: "relative",
+              borderBottom: isCompact ? "1px solid #E2E2ED" : "none",
             }}
           >
             {currentSection === "works" && (
-              <>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "grid",
-                    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-                    gridTemplateRows: "26px 30px 48px",
-                    columnGap: 40,
-                    rowGap: 0,
-                    alignItems: "center",
-                    overflowX: "auto",
-                  }}
-                >
-                <div
-                  style={{
-                    gridColumn: "1 / 3",
-                    textAlign: "center",
-                    fontSize: 10,
-                    fontWeight: 500,
-                    letterSpacing: "0.14em",
-                    fontFamily: "'Jost', sans-serif",
-                    color: "#1A1B4B",
-                    transform: "translateY(6px)",
-                  }}
-                >
-                  {t.content}
+              isCompact ? (
+                // COMPACT: the 4-column filter grid can't fit at phone/tablet width, so
+                // each filter group (label + pills) becomes one item in a horizontally
+                // scrollable row instead.
+                <div style={{ display: "flex", gap: 22, overflowX: "auto", width: "100%", paddingBottom: 2 }}>
+                  {[
+                    { label: t.medium, node: <FilterPills options={t.mediumOpts} selected={selectedMediums} onSelect={toggleMedium} multi /> },
+                    { label: t.media, node: <FilterPills options={t.mediaOpts} selected={filters.media} onSelect={(i) => toggleFilter("media", i)} /> },
+                    { label: t.layout, node: <FilterPills options={t.layoutOpts} selected={filters.layout} onSelect={(i) => toggleFilter("layout", i)} /> },
+                    { label: t.order, node: <FilterPills options={t.orderOpts} selected={filters.order} onSelect={(i) => toggleFilter("order", i)} /> },
+                  ].map((group) => (
+                    <div key={group.label} style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "center", flexShrink: 0 }}>
+                      <FilterLabel label={group.label} />
+                      {group.node}
+                    </div>
+                  ))}
                 </div>
-                <div
-                  style={{
-                    gridColumn: "3 / 5",
-                    textAlign: "center",
-                    fontSize: 10,
-                    fontWeight: 500,
-                    letterSpacing: "0.14em",
-                    fontFamily: "'Jost', sans-serif",
-                    color: "#1A1B4B",
-                    transform: "translateY(6px)",
-                  }}
-                >
-                  {t.context}
-                </div>
-
-                <FilterLabel label={t.medium} />
-                <FilterLabel label={t.media} />
-                <FilterLabel label={t.layout} />
-                <FilterLabel label={t.order} />
-
-                <FilterPills options={t.mediumOpts} selected={selectedMediums} onSelect={toggleMedium} multi />
-                <FilterPills options={t.mediaOpts} selected={filters.media} onSelect={(i) => toggleFilter("media", i)} />
-                <FilterPills options={t.layoutOpts} selected={filters.layout} onSelect={(i) => toggleFilter("layout", i)} />
-                <FilterPills options={t.orderOpts} selected={filters.order} onSelect={(i) => toggleFilter("order", i)} />
-                </div>
-              </>
+              ) : (
+                <>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      display: "grid",
+                      gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+                      gridTemplateRows: "26px 30px 48px",
+                      columnGap: 40,
+                      rowGap: 0,
+                      alignItems: "center",
+                      overflowX: "auto",
+                    }}
+                  >
+                  <div
+                    style={{
+                      gridColumn: "1 / 3",
+                      textAlign: "center",
+                      fontSize: 10,
+                      fontWeight: 500,
+                      letterSpacing: "0.14em",
+                      fontFamily: "'Jost', sans-serif",
+                      color: "#1A1B4B",
+                      transform: "translateY(6px)",
+                    }}
+                  >
+                    {t.content}
+                  </div>
+                  <div
+                    style={{
+                      gridColumn: "3 / 5",
+                      textAlign: "center",
+                      fontSize: 10,
+                      fontWeight: 500,
+                      letterSpacing: "0.14em",
+                      fontFamily: "'Jost', sans-serif",
+                      color: "#1A1B4B",
+                      transform: "translateY(6px)",
+                    }}
+                  >
+                    {t.context}
+                  </div>
+                  <FilterLabel label={t.medium} />
+                  <FilterLabel label={t.media} />
+                  <FilterLabel label={t.layout} />
+                  <FilterLabel label={t.order} />
+                  <FilterPills options={t.mediumOpts} selected={selectedMediums} onSelect={toggleMedium} multi />
+                  <FilterPills options={t.mediaOpts} selected={filters.media} onSelect={(i) => toggleFilter("media", i)} />
+                  <FilterPills options={t.layoutOpts} selected={filters.layout} onSelect={(i) => toggleFilter("layout", i)} />
+                  <FilterPills options={t.orderOpts} selected={filters.order} onSelect={(i) => toggleFilter("order", i)} />
+                  </div>
+                </>
+              )
             )}
-
             {currentSection === "about" && (
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {["description", "bio", "contact"].map((key) => (
                   <button
                     key={key}
@@ -2222,18 +2416,26 @@ export default function App() {
               </div>
             )}
           </div>
-
-          {/* Body — the only region that scrolls. Content depends on the active section. */}
-          <div data-scroll-region style={{ flex: 1, overflowY: "auto", padding: "32px 44px 60px" }}>
+          {/* Body — the only region that scrolls. Content depends on the active section.
+              Bottom padding grows on compact to clear the fixed bottom tab bar. */}
+          <div
+            data-scroll-region
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: isCompact ? `20px ${contentPadX}px 84px` : "32px 44px 60px",
+            }}
+          >
             {currentSection === "works" &&
               (selectedWork ? (
-                <WorkDetail artwork={selectedWork} lang={lang} firstImageRef={detailFirstImageRef} />
+                <WorkDetail artwork={selectedWork} lang={lang} firstImageRef={detailFirstImageRef} compact={isCompact} />
               ) : filters.layout === 0 ? (
                 <WorksSlideshow
                   artworks={sortedArtworks}
                   showCaption={shouldShowCaption}
                   onOpen={openWork}
                   registerFrame={registerFrame}
+                  compact={isCompact}
                 />
               ) : filters.layout === 1 ? (
                 <div
@@ -2241,7 +2443,7 @@ export default function App() {
                   style={{
                     display: "grid",
                     gridTemplateColumns: `repeat(${galleryColumns}, minmax(0, 1fr))`,
-                    columnGap: 28,
+                    columnGap: galleryGap,
                     alignItems: "start",
                   }}
                 >
@@ -2258,8 +2460,8 @@ export default function App() {
                             frameRef={registerFrame(a.id)}
                             columnWidth={columnWidth}
                             independentColumn
-                            verticalGap={40}
-                            topOffset={columnItemIndex > 0 ? [0, 40, 80, 40][columnIndex] : 0}
+                            verticalGap={isPhone ? 24 : 40}
+                            topOffset={columnItemIndex > 0 && galleryColumns > 1 ? [0, 40, 80, 40][columnIndex] : 0}
                           />
                         ))}
                     </div>
@@ -2272,7 +2474,7 @@ export default function App() {
                     display: "grid",
                     gridTemplateColumns: `repeat(${galleryColumns}, 1fr)`,
                     gridAutoRows: "8px",
-                    columnGap: 28,
+                    columnGap: galleryGap,
                     rowGap: 0,
                   }}
                 >
@@ -2289,15 +2491,64 @@ export default function App() {
                   ))}
                 </div>
               ))}
-
-            {currentSection === "about" && <AboutBody lang={lang} t={t} sections={aboutSections} />}
-
-            {currentSection === "projects" && <ProjectsBody lang={lang} t={t} />}
-
-            {currentSection === "studies" && <StudiesBody lang={lang} t={t} />}
+            {currentSection === "about" && <AboutBody lang={lang} t={t} sections={aboutSections} compact={isCompact} />}
+            {currentSection === "projects" && (
+              <ProjectsBody lang={lang} t={t} stacked={isPhone} padX={contentPadX} dockedLeft={dockedLeft} compact={isCompact} />
+            )}
+            {currentSection === "studies" && (
+              <StudiesBody lang={lang} t={t} stacked={isPhone} padX={contentPadX} dockedLeft={dockedLeft} compact={isCompact} />
+            )}
           </div>
         </div>
       </div>
+      {/* COMPACT bottom tab bar — replaces the sidebar's nav list below the breakpoint.
+          Fixed/overlaid so it doesn't participate in the column flex flow above; the
+          scroll region's extra bottom padding keeps content clear of it. */}
+      {isCompact && (
+        <div
+          style={{
+            position: "fixed",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            borderTop: "1px solid #E2E2ED",
+            background: "rgba(255,255,255,0.98)",
+            backdropFilter: "blur(8px)",
+            zIndex: 30,
+            paddingBottom: "env(safe-area-inset-bottom)",
+          }}
+        >
+          {navKeys.map((key, idx) => {
+            const active = idx === selectedNav && !selectedWork;
+            return (
+              <button
+                key={key}
+                className="tap-target"
+                onClick={() => handleNavClick(idx)}
+                style={{
+                  flex: 1,
+                  minHeight: 52,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "'Jost', sans-serif",
+                  fontSize: 11,
+                  letterSpacing: "0.12em",
+                  color: active ? "#1A1B4B" : "#9A9A94",
+                  fontWeight: active ? 600 : 400,
+                  transition: "color 0.25s ease",
+                }}
+              >
+                {t[key]}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
