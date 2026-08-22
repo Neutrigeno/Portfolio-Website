@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { Plus, Send, ChevronRight, ChevronLeft } from "lucide-react";
+import { Plus, Send, ChevronRight, ChevronLeft, ArrowLeft, ArrowRight } from "lucide-react";
 /*
   FONT NOTE:
   Avenir is a licensed commercial font, so it can't be pulled from a free CDN.
@@ -893,18 +893,23 @@ function WorkDetail({ artwork, lang, firstImageRef, compact }) {
   ].filter((f) => f.value);
   return (
     <div>
-      {/* Example toggle — lets you compare images-left vs images-right live.
-          Remove this button once you've decided which layout to keep. */}
+      {/* Toggle — swaps which side the images sit on. Icon-only now (arrow points to the
+          side the images will move to); aria-label keeps it accessible for screen readers. */}
       <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
         {["left", "right"].map((side) => (
           <button
             key={side}
             onClick={() => setImageSide(side)}
+            aria-label={lang === "ko" ? (side === "left" ? "이미지: 왼쪽" : "이미지: 오른쪽") : `Images: ${side}`}
+            aria-pressed={imageSide === side}
+            title={lang === "ko" ? (side === "left" ? "이미지: 왼쪽" : "이미지: 오른쪽") : `Images: ${side.charAt(0).toUpperCase() + side.slice(1)}`}
             style={{
-              fontFamily: "'Jost', sans-serif",
-              fontSize: 10,
-              letterSpacing: "0.1em",
-              padding: "5px 12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 30,
+              height: 30,
+              padding: 0,
               borderRadius: 999,
               background: imageSide === side ? "#EDEDEA" : "transparent",
               color: "#1A1B4B",
@@ -913,7 +918,11 @@ function WorkDetail({ artwork, lang, firstImageRef, compact }) {
               transition: "background 0.25s ease",
             }}
           >
-            {lang === "ko" ? (side === "left" ? "이미지: 왼쪽" : "이미지: 오른쪽") : `IMAGES: ${side.toUpperCase()}`}
+            {side === "left" ? (
+              <ArrowLeft size={14} strokeWidth={1.5} />
+            ) : (
+              <ArrowRight size={14} strokeWidth={1.5} />
+            )}
           </button>
         ))}
       </div>
@@ -983,8 +992,13 @@ function WorkDetail({ artwork, lang, firstImageRef, compact }) {
     </div>
   );
 }
-function ReturnButton({ onClick, initials = "CA" }) {
+// Shows the "image" mark inside the circle; falls back to the "initials" text if no
+// image is given, or if it fails to load (e.g. the file isn't at that path yet), so the
+// button never renders a broken-image icon.
+function ReturnButton({ onClick, initials = "CA", image = "/images/mark.png" }) {
   const [hover, setHover] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const showImage = !!image && !imgError;
   return (
     <button
       className="tap-target"
@@ -1002,14 +1016,32 @@ function ReturnButton({ onClick, initials = "CA" }) {
         alignItems: "center",
         justifyContent: "center",
         cursor: "pointer",
-        fontFamily: "'Jost', sans-serif",
-        fontSize: 12,
-        letterSpacing: "0.03em",
-        color: "#1A1B4B",
-        fontWeight: hover ? 700 : 400, // intentionally no transition — bolds instantly on hover
+        padding: 0,
+        overflow: "hidden",
+        boxSizing: "border-box",
+        transition: "border-color 0.25s ease, background 0.25s ease",
       }}
     >
-      {initials}
+      {showImage ? (
+        <img
+          src={image}
+          alt="Return home"
+          onError={() => setImgError(true)}
+          style={{ width: "62%", height: "62%", objectFit: "contain", display: "block", pointerEvents: "none" }}
+        />
+      ) : (
+        <span
+          style={{
+            fontFamily: "'Jost', sans-serif",
+            fontSize: 12,
+            letterSpacing: "0.03em",
+            color: "#1A1B4B",
+            fontWeight: hover ? 700 : 400, // intentionally no transition — bolds instantly on hover
+          }}
+        >
+          {initials}
+        </span>
+      )}
     </button>
   );
 }
