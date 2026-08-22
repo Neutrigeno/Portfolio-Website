@@ -8,20 +8,13 @@
     href="./images/Favicon-black.png"
    >
 
-   <script>
+   <link id="favicon" rel="icon" type="image/png" href="/images/Favicon-black.png">
+<script>
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   function updateFavicon() {
-    const href = darkMode.matches
+    document.getElementById("favicon").href = darkMode.matches
       ? "/images/Favicon-white.png"
       : "/images/Favicon-black.png";
-    const old = document.getElementById("favicon");
-    if (old) old.remove();
-    const link = document.createElement("link");
-    link.id = "favicon";
-    link.rel = "icon";
-    link.type = "image/png";
-    link.href = href;
-    document.head.appendChild(link);
   }
   updateFavicon();
   darkMode.addEventListener("change", updateFavicon);
