@@ -1,15 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
-   <link
-    id="favicon"
-    rel="icon"
-    type="image/png"
-    href="./images/Favicon-black.png"
-   >
-
    <link id="favicon" rel="icon" type="image/png" href="/images/Favicon-black.png">
-<script>
+   <script>
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   function updateFavicon() {
     document.getElementById("favicon").href = darkMode.matches
@@ -19,7 +12,6 @@
   updateFavicon();
   darkMode.addEventListener("change", updateFavicon);
 </script>
-
    <meta charset="UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <title>Portfolio</title>
